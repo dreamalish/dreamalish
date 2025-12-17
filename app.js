@@ -43,4 +43,7 @@ sequelize.authenticate()
         });
       });
   })
-  .catch(e
+  .catch(e => {
+    console.log("Error: Server crashed.");
+    console.log(e);
+  });
