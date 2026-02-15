@@ -1,0 +1,35 @@
+/* Comment.css */
+.comment-section {
+  margin-top: 1rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #b2ebf2;
+}
+
+.comment-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.comment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.comment-card {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #ffffffcc;
+  padding: 0.5rem;
+  border-radius: 5px;
+}
+
+.comment-username {
+  font-weight: bold;
+}
+
+.comment-content {
+  flex: 1;
+}

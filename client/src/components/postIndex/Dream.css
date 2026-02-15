@@ -1,0 +1,330 @@
+/* PAGE CONTAINER */
+.dream-page {
+  padding: 40px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* GRID LAYOUT */
+.dream-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 28px;
+  margin-top: 30px;
+}
+
+/* INSTAGRAM SQUARE CARDS */
+.dream-card {
+  position: relative;
+  border-radius: 22px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  cursor: pointer;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.dream-card {
+  aspect-ratio: 1 / 1;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Hover Lift */
+.dream-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* HEADER STYLE */
+.dream-card .card-header {
+  background: transparent;
+  border-bottom: none;
+  padding: 0;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* BODY */
+.dream-card .card-body {
+  overflow: hidden;
+  padding: 0;
+}
+
+.dream-card h5 {
+  font-size: 1.1rem;
+  margin-top: 10px;
+  margin-bottom: 8px;
+}
+
+.dream-card p {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  -webkit-box-orient: vertical;
+}
+
+/* Avatar */
+.avatar-tiny {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+
+/* CATEGORY COLOR ACCENTS */
+/* ===== DREAM CATEGORY COLORS ===== */
+
+.dream-card.joy { border-top: 6px solid #FFD166; }
+.dream-card.love { border-top: 6px solid #E63946; }
+.dream-card.desire { border-top: 6px solid #C2185B; }
+.dream-card.fortune { border-top: 6px solid #2ECC71; }
+
+.dream-card.despair { border-top: 6px solid #2D2D34; }
+.dream-card.fear { border-top: 6px solid #3A0CA3; }
+.dream-card.rage { border-top: 6px solid #9D0208; }
+.dream-card.humiliation { border-top: 6px solid #6A4C93; }
+
+.dream-card.confusion { border-top: 6px solid #00B4D8; }
+.dream-card.memory { border-top: 6px solid #457B9D; }
+.dream-card.envy { border-top: 6px solid #6A994E; }
+.dream-card.mundanity { border-top: 6px solid #ADB5BD; }
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .dream-grid {
+    gap: 18px;
+  }
+}
+.dream-content {
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.dream-content p {
+  font-size: 0.95rem;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.comment-input-area {
+  margin-top: auto;
+}
+.dream-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 28px;
+  margin-top: 30px;
+}
+
+.dream-card {
+  aspect-ratio: 1 / 1;
+  border-radius: 22px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  background: white;
+  border: 1px solid #eee;
+}
+
+.dream-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 35px rgba(0,0,0,0.1);
+}
+
+.dream-card-inner {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 18px;
+}
+
+.dream-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+}
+
+.avatar-tiny {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.dream-username {
+  font-weight: 600;
+}
+
+.dream-category {
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+.dream-preview {
+  flex-grow: 1;
+  margin-top: 10px;
+  overflow: hidden;
+}
+
+.dream-preview p {
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.dream-footer {
+  margin-top: auto;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.comment-count {
+  font-weight: 500;
+}
+.dream-modal .modal-content {
+  border-radius: 20px;
+  animation: scaleIn 0.25s ease forwards;
+}
+
+.dream-modal-backdrop {
+  backdrop-filter: blur(6px);
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.dream-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.dream-card {
+  position: relative;
+}
+
+.dream-card:hover .dream-overlay {
+  opacity: 1;
+}
+.dream-page.dark {
+  background: #121212;
+  color: #f1f1f1;
+}
+
+.dream-page.dark .dream-card {
+  background: #1e1e1e;
+  border: 1px solid #2c2c2c;
+}
+
+.dream-page.dark .dream-overlay {
+  background: rgba(255,255,255,0.1);
+}
+
+#publicCommentPic {
+  width: 50px;
+  display: block;
+  border-radius: 500px;
+  float: right;
+  margin-right: 15px;
+  margin-top: 0px;
+  margin-bottom: 4px;
+}
+.dream-card {
+  background: #FFFFFF;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dream-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+}
+
+.dream-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.dream-card-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 1.25rem;
+  color: #1A1A1A;
+}
+
+.dream-card-description {
+  font-family: 'Roboto', sans-serif;
+  color: #4F4F4F;
+  line-height: 1.6;
+  margin-top: 8px;
+}
+.comment-card {
+  background: #F1F9FF;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.comment-card img.avatar {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.comment-content {
+  flex: 1;
+  font-family: 'Roboto', sans-serif;
+  font-size: 0.95rem;
+  color: #1A1A1A;
+}
+
+.comment-content span.username {
+  font-weight: 600;
+  color: #64B5F6;
+  margin-right: 4px;
+}
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px;
+}
