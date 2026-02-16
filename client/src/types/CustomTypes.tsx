@@ -10,18 +10,32 @@ export type CommentType = {
         dream?: DreamType
 }
 export type DreamType = {
-        content: string,
-        category: string,
-        userId?: number,
-        isNSFW?: boolean,
-        title: string,
-        id?: number,
-        user?: UserType,
-        views?: number,
-        createdAt?: string,
-        updatedAt?: string,
-        Comments?: CommentType[]
-}
+        id?: number;
+      
+        title: string;
+        content: string;
+        category: string;
+      
+        isPrivate?: boolean;
+        isNSFW?: boolean;
+      
+        userId?: number;
+      
+        views?: number;
+        likes?: number;
+        liked?: boolean;
+      
+        createdAt?: string;
+        updatedAt?: string;
+      
+        User?: {
+          id?: number;
+          username: string;
+          profilePic?: string;
+        };
+      
+        Comments?: CommentType[];
+      };
 export type UserType = {
         username: string,
         profilePic: string,

@@ -11,26 +11,27 @@ import { authFetch } from '../../helper/APIHelper';
 import DreamModal from './DreamModal';
 import './Dream.css';
 import { Link } from 'react-router-dom';
+import { DreamType } from '../../types/CustomTypes';
 
 type User = {
   username: string;
   profilePic?: string;
 };
 
-type DreamType = {
-  id: number;
-  title: string;
-  content: string;
-  category: string;
-  isPrivate: boolean;
-  createdAt: string;
-  User?: User;
-  Comments?: any[];
-  commentCount?: number;
-  views?: number;
-  likes?: number;
-  liked?: boolean;
-};
+//type DreamType = {
+//  id: number;
+//  title: string;
+//  content: string;
+//  category: string;
+//  isPrivate: boolean;
+//  createdAt: string;
+//  User?: User;
+//  Comments?: any[];
+//  commentCount?: number;
+//  views?: number;
+//  likes?: number;
+//  liked?: boolean;
+//};
 
 export default function Dreams() {
   const [dreams, setDreams] = useState<DreamType[]>([]);
@@ -193,9 +194,9 @@ export default function Dreams() {
                 )
               );
 
-              authFetch(`/api/dreams/${dream.id}`, {
-                method: 'POST',
-              }).catch(() => {});
+              authFetch(`/api/dreams/${dream.id}/view`, {
+                method: 'PUT',
+              });
             }}
             className={`dream-card ${dream.category}`}
           >
@@ -230,12 +231,12 @@ export default function Dreams() {
                 )}
 
                 <div className="dream-stats">
-                  <span>💬 {Number(dream.commentCount) || 0}</span>
+                  <span>💬{dream.Comments?.length || 0}</span>
                   <span>👁 {dream.views || 0}</span>
                   <span
                     onClick={(e) => {
                       e.stopPropagation();
-                      toggleLike(dream.id);
+                      toggleLike(dream.id!);
                     }}
                     style={{ cursor: 'pointer' }}
                   >

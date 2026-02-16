@@ -95,4 +95,21 @@ router.put('/:id/view', async (req, res) => {
   }
 });
 
+router.post('/:id/like', async (req, res) => {
+  try {
+    const dream = await dreamModel.findByPk(req.params.id);
+
+    if (!dream) {
+      return res.status(404).json({ error: 'Dream not found' });
+    }
+
+    await dream.increment('likes');
+    await dream.reload();
+
+    res.json({ likes: dream.likes });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to like dream' });
+  }
+});
 module.exports = router;

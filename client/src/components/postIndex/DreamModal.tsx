@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Modal, ModalBody, ModalHeader } from "reactstrap";
 import Comment from "./Comment";
 import { DreamType } from "../../types/CustomTypes";
+import { authFetch } from '../../helper/APIHelper';
 import "./Dream.css";
 
 type Props = {
@@ -14,9 +15,9 @@ const DreamModal: React.FC<Props> = ({ dream, onClose }) => {
   useEffect(() => {
     if (!dream?.id) return;
 
-    fetch(`${process.env.REACT_APP_API_URL}/api/dreams/${dream.id}/view`, {
-      method: "PUT"
-    }).catch(err => console.error("View update failed:", err));
+    authFetch(`/api/dreams/${dream.id}/view`, {
+      method: 'PUT'
+    });
 
   }, [dream?.id]);
 
@@ -32,7 +33,8 @@ const DreamModal: React.FC<Props> = ({ dream, onClose }) => {
       backdropClassName="dream-modal-backdrop"
     >
       <ModalHeader toggle={onClose}>
-        {dream.title}
+        {dream.title} <p></p>
+        {dream.category}
       </ModalHeader>
 
       <ModalBody>

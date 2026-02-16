@@ -18,7 +18,7 @@ type Props = {
 };
 
 export default function Comment({ DreamId }: Props) {
-  const [comments, setComments] = useState<CommentType[]>([]);
+  const [Comments, setComments] = useState<CommentType[]>([]);
   const [content, setContent] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
@@ -67,7 +67,7 @@ export default function Comment({ DreamId }: Props) {
       });
 
       if (res?.id) {
-        setComments([res, ...comments]);
+        setComments([res, ...Comments]);
         setContent("");
       }
     } catch (err) {
@@ -84,9 +84,9 @@ export default function Comment({ DreamId }: Props) {
         <p>Loading comments...</p>
       ) : (
         <>
-          {comments.length === 0 && <p>No comments yet.</p>}
+          {Comments.length === 0 && <p>No comments yet.</p>}
 
-          {comments.map((comment) => (
+          {Comments.map((comment) => (
             <div key={comment.id} className="comment-card">
             <div className="card-body">
               <img

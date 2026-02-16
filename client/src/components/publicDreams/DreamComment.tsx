@@ -81,7 +81,7 @@ export default class DreamComment extends React.Component<
                 this.props.setDreamToComment({
                   category: "",
                   content: "",
-                  isNSFW: false,
+                  isNSFW: undefined,
                   title: "",
                   id: 0,
                   userId: 0,
