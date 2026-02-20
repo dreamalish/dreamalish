@@ -1,11 +1,9 @@
-let APIURL = '';
+let APIURL: string;
 
-if (window.location.hostname === 'localhost') {
+if (process.env.NODE_ENV === 'development') {
   APIURL = 'http://localhost:3002';
 } else {
-  // When deployed, use SAME ORIGIN (Render backend)
   APIURL = '';
 }
 
 export default APIURL;
-

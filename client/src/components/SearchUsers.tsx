@@ -119,7 +119,7 @@ const SearchUsers: React.FC = () => {
                 <img
                   src={
                     user.profilePic
-                      ? `${process.env.REACT_APP_API_URL}/uploads/${user.profilePic}`
+                      ? `${process.env.REACT_APP_API_URL}${user.profilePic}`
                       : "/assets/defaultProfilePic.gif"
                   }
                   alt="avatar"

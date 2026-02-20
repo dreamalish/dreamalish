@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import DreamBar from './navbar/DreamBar';
 import APIURL from '../../helper/Environment';
-import Profile from '../userData/Profile';
+import Profile from '../postIndex/Profile';
 import PostIndex from '../postIndex/PostIndex';
 import PublicIndex from '../publicDreams/PublicIndex';
 import About from '../site/footer/About';

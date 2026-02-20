@@ -27,12 +27,11 @@ export default function PublicProfile() {
   if (!user) return <p>User not found.</p>;
 
   const avatarUrl = user.profilePic
-    ? `${process.env.REACT_APP_API_URL}/uploads/${user.profilePic}`
+    ? `${process.env.REACT_APP_API_URL}${user.profilePic}`
     : '/assets/defaultProfilePic.gif';
 
   return (
     <div style={{ maxWidth: '500px', margin: '2rem auto' }}>
-      <h2>{user.username}</h2>
 
       <img
         src={avatarUrl}
@@ -45,7 +44,7 @@ export default function PublicProfile() {
           marginBottom: '1rem'
         }}
       />
-
+      <h2>{user.username}</h2>
       {user.location && <p><strong>Location:</strong> {user.location}</p>}
       {user.bio && <p><strong>Bio:</strong> {user.bio}</p>}
 

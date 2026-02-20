@@ -11,6 +11,7 @@ import {
   ModalFooter
 } from 'reactstrap';
 import { authFetch } from '../../helper/APIHelper';
+import APIURL from '../../helper/Environment';
 
 export default function Profile() {
   const [username, setUsername] = useState('');
@@ -47,7 +48,7 @@ export default function Profile() {
   
         if (data.profilePic) {
           setCurrentAvatar(
-            `${process.env.REACT_APP_API_URL}/uploads/${data.profilePic}`
+            `${process.env.REACT_APP_API_URL}${data.profilePic}`
           );
         }
   
@@ -95,10 +96,10 @@ export default function Profile() {
 
         if (avatarRes?.file) {
           setCurrentAvatar(
-            `${process.env.REACT_APP_API_URL}/uploads/${avatarRes.file}`
+            `${APIURL}${avatarRes.file}`
           );
         }
-
+        console.log('APIURL:', APIURL);
         setProfilePic(null);
       }
 
@@ -114,6 +115,7 @@ export default function Profile() {
 
       setMessage('Profile updated successfully!');
       setIsEditing(false);
+      console.log("Final avatar URL:", currentAvatar);
 
       setTimeout(() => setMessage(''), 3000);
     } catch (err) {

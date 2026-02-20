@@ -38,10 +38,11 @@ router.post('/avatar', validateSession, upload.single('avatar'), async (req, res
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
 
     await userModel.update(
-      { profilePic: req.file.filename },
+      { profilePic: `/uploads/${req.file.filename}` },
       { where: { id: req.user.id } }
     );
-
+    console.log("Saved file:", req.file);
+    console.log("File path:", `/uploads/${req.file.filename}`);
     res.json({ message: 'Avatar updated', file: req.file.filename });
   } catch (err) {
     res.status(500).json({ error: err.message });

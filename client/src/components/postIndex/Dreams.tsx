@@ -163,7 +163,8 @@ export default function Dreams() {
               </div>
 
               <div className="dream-preview">
-                <h5>{dream.title}</h5>
+                <h4>{dream.title}</h4>
+                <h5>{dream.category}</h5>
                 <p>{dream.content}</p>
               </div>
 
@@ -177,7 +178,7 @@ export default function Dreams() {
                     <img
                       src={
                         dream.User.profilePic
-                          ? `${process.env.REACT_APP_API_URL}/uploads/${dream.User.profilePic}`
+                          ? `${process.env.REACT_APP_API_URL}${dream.User.profilePic}`
                           : "/assets/defaultProfilePic.gif"
                       }
                       alt="avatar"
