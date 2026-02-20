@@ -24,6 +24,8 @@ export type DreamType = {
         views?: number;
         likes?: number;
         liked?: boolean;
+
+        commentCount?: number;
       
         createdAt?: string;
         updatedAt?: string;

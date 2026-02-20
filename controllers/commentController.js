@@ -7,23 +7,27 @@ router.post('/create', validateSession, async (req, res) => {
   try {
     const { content, DreamId } = req.body;
 
-    if (!DreamId) {
-      return res.status(400).json({ error: 'DreamId is required' });
-    }
-    console.log("REQ BODY:", req.body);
-
-    const comment = await commentModel.create({
+    const newComment = await commentModel.create({
       content,
-      UserId: req.user.id,
-      DreamId
+      DreamId,
+      UserId: req.user.id
     });
 
-    res.status(201).json(comment);
+    const commentWithUser = await commentModel.findByPk(newComment.id, {
+      include: [
+        {
+          model: userModel,
+          attributes: ['id', 'username', 'profilePic']
+        }
+      ]
+    });
+    console.log("REQ USER:", req.user);
+    res.status(201).json(commentWithUser);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Error creating comment:', err);
+    res.status(500).json({ error: 'Failed to create comment' });
   }
 });
-
 /* ===== GET COMMENTS FOR A DREAM ===== */
 
 router.get('/dream/:DreamId', validateSession, async (req, res) => {
@@ -36,7 +40,7 @@ router.get('/dream/:DreamId', validateSession, async (req, res) => {
       }],
       order: [['createdAt', 'DESC']]
     });
-
+    console.log("REQ USER:", req.user);
     res.status(200).json(comments);
   } catch (err) {
     res.status(500).json({ error: err.message });

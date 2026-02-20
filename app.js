@@ -23,13 +23,17 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 ======================================================= */
 
 /* ---------- PUBLIC ROUTES ---------- */
+app.use('/api', (req, res, next) => {
+  res.set('Cache-Control', 'no-store');
+  next();
+});
 app.use('/api/users', require('./controllers/userController'));
 
 
 /* ---------- PROTECTED ROUTES ---------- */
 app.use('/api/dreams', require('./middleware/validate-session'), dreamController);
 app.use('/api/comments', require('./middleware/validate-session'), commentController);
-app.use('/profile', require('./controllers/profileController'), profileController);
+app.use('/api/profile', require('./middleware/validate-session'), profileController);
 
 
 /* =======================================================
@@ -56,7 +60,7 @@ if (process.env.NODE_ENV === 'production') {
 sequelize.authenticate()
   .then(() => {
     console.log('Connected to Postgres database');
-    return sequelize.sync({force:true});
+    return sequelize.sync({alter:true});
   })
   .then(() => {
     console.log('DB synced');                // optional but nice

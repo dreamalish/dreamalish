@@ -8,18 +8,10 @@ import "./Dream.css";
 type Props = {
   dream: DreamType | null;
   onClose: () => void;
+  onCommentAdded: (dreamId: number)=>void;
 };
 
-const DreamModal: React.FC<Props> = ({ dream, onClose }) => {
-
-  useEffect(() => {
-    if (!dream?.id) return;
-
-    authFetch(`/api/dreams/${dream.id}/view`, {
-      method: 'PUT'
-    });
-
-  }, [dream?.id]);
+const DreamModal: React.FC<Props> = ({ dream, onClose, onCommentAdded }) => {
 
   if (!dream) return null;
 
@@ -33,19 +25,22 @@ const DreamModal: React.FC<Props> = ({ dream, onClose }) => {
       backdropClassName="dream-modal-backdrop"
     >
       <ModalHeader toggle={onClose}>
-        {dream.title} <p></p>
-        {dream.category}
+        <h1>{dream.title}</h1>
+        <h3>{dream.category}</h3>
       </ModalHeader>
 
       <ModalBody>
         <div className="modal-dream-content">
           <p>{dream.content}</p>
-          <div>👁 {dream.views || 0}</div>
+          <div>👁 {dream.views || 0 }</div>
         </div>
 
         <hr />
 
-        <Comment DreamId={dream.id!} />
+        <Comment
+          DreamId={dream.id!}
+          onCommentAdded={() => onCommentAdded(dream.id!)}
+/>
       </ModalBody>
     </Modal>
   );

@@ -1,12 +1,13 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Auth from '../src/components/auth/Auth';
-import Dreams from './components/postIndex/Dreams';
+import PostIndex from './components/postIndex/PostIndex';
 import Profile from './components/postIndex/Profile';
 import SiteNav from './components/site/SiteNav';
 import PublicProfile from './components/postIndex/PublicProfile';
 import './App.css';
 import logo from '../src/assets/image.jpg';
+import Dreams from './components/postIndex/Dreams';
 
 
 type State = {
@@ -63,7 +64,7 @@ export default class App extends React.Component<{}, State> {
             <SiteNav logout={this.logout} />
 
             <Routes>
-              <Route path="/" element={<Dreams />} />
+              <Route path="/" element={<Dreams/>} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/u/:username" element={<PublicProfile />} />
               <Route path="*" element={<Navigate to="/" />} />

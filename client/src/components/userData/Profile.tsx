@@ -3,6 +3,7 @@ import { authFetch } from "../../helper/APIHelper";
 
 export default function Profile() {
   const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProfile = async () => {

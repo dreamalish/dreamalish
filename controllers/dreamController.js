@@ -2,6 +2,8 @@
 const express = require('express');
 const router = express.Router();
 const { dreamModel, userModel, commentModel, sequelize } = require('../db-associations');
+const Like = sequelize.models.Like;
+const { Sequelize } = require('sequelize');
  // make sure sequelize is exported there
 
 const validateSession = require('../middleware/validate-session');
@@ -37,8 +39,8 @@ router.post('/create', validateSession, async (req, res) => {
   }
 });
 
-// ---------- GET ALL DREAMS ----------
-router.get('/', async (req, res) => {
+// ---------- GET ALL DREAMS -----
+router.get('/', validateSession, async (req, res) => {
   try {
     const dreams = await dreamModel.findAll({
       order: [['createdAt', 'DESC']],
@@ -49,28 +51,58 @@ router.get('/', async (req, res) => {
         },
         {
           model: commentModel
+        },
+        {
+          model: Like,
+          attributes: ['id', 'userId']
         }
       ]
     });
 
-    res.json(dreams);
+    const formatted = dreams.map(dream => {
+      const dreamJSON = dream.toJSON();
+
+      return {
+        ...dreamJSON,
+        likes: dreamJSON.Likes?.length || 0,
+        liked: dreamJSON.Likes?.some(
+          like => like.userId === req.user.id
+        ) || false
+      };
+    });
+
+    res.json(formatted);
+
   } catch (err) {
     console.error('Error fetching dreams:', err);
-    res.status(500).json({ error: 'Failed to fetch dreams', details: err.message });
+    res.status(500).json({
+      error: 'Failed to fetch dreams',
+      details: err.message
+    });
   }
 });
 
 router.get('/:id', async (req, res) => {
   try {
     const dream = await dreamModel.findByPk(req.params.id, {
-      include: [{ model: userModel, attributes: ['id','username','profilePic'] }]
+      include: [
+        {
+          model: userModel,
+          attributes: ['id', 'username', 'profilePic']
+        },
+        {
+          model: commentModel
+        },
+        {
+          model: Like,
+          attributes: []
+        }
+      ]
     });
 
     if (!dream) {
       return res.status(404).json({ error: 'Dream not found' });
     }
-
-    await dream.increment('views');
 
     res.json(dream);
   } catch (err) {
@@ -95,21 +127,27 @@ router.put('/:id/view', async (req, res) => {
   }
 });
 
-router.post('/:id/like', async (req, res) => {
+router.post('/:id/like', validateSession, async (req, res) => {
   try {
-    const dream = await dreamModel.findByPk(req.params.id);
+    const userId = req.user.id;
+    const dreamId = req.params.id;
 
-    if (!dream) {
-      return res.status(404).json({ error: 'Dream not found' });
+    const existingLike = await Like.findOne({
+      where: { userId, dreamId }
+    });
+
+    if (existingLike) {
+      // Unlike
+      await existingLike.destroy();
+      return res.json({ liked: false });
+    } else {
+      // Like
+      await Like.create({ userId, dreamId });
+      return res.json({ liked: true });
     }
-
-    await dream.increment('likes');
-    await dream.reload();
-
-    res.json({ likes: dream.likes });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Failed to like dream' });
+    res.status(500).json({ error: 'Like failed' });
   }
 });
 module.exports = router;

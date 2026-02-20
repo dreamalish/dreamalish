@@ -31,28 +31,35 @@ export default function Profile() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await authFetch('/profile/me');
-
-        if (res) {
-          setUsername(res.username);
-          setEmail(res.email || '');
-          setBio(res.bio || '');
-          setLocation(res.location || '');
-
-          if (res.profilePic) {
-            setCurrentAvatar(
-              `${process.env.REACT_APP_API_URL}/uploads/${res.profilePic}`
-            );
-          }
+        const data = await authFetch('/api/profile/me');
+  
+        console.log("Profile data:", data);
+  
+        if (!data) {
+          console.error("No profile data returned");
+          return;
         }
+  
+        setUsername(data.username || '');
+        setEmail(data.email || '');
+        setBio(data.bio || '');
+        setLocation(data.location || '');
+  
+        if (data.profilePic) {
+          setCurrentAvatar(
+            `${process.env.REACT_APP_API_URL}/uploads/${data.profilePic}`
+          );
+        }
+  
       } catch (err) {
         console.error('Error loading profile:', err);
       } finally {
         setLoading(false);
       }
     };
-
-    fetchProfile();
+  
+    fetchProfile();   // ✅ YES KEEP THIS
+  
   }, []);
 
   // ===============================
@@ -81,7 +88,7 @@ export default function Profile() {
         const formData = new FormData();
         formData.append('avatar', profilePic);
 
-        const avatarRes = await authFetch('/profile/avatar', {
+        const avatarRes = await authFetch('/api/profile/avatar', {
           method: 'POST',
           body: formData,
         });
@@ -96,7 +103,7 @@ export default function Profile() {
       }
 
       // Update profile fields
-      await authFetch('/profile/update', {
+      await authFetch('/api/profile/update', {
         method: 'PUT',
         body: JSON.stringify({
           email,

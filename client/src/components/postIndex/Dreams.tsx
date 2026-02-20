@@ -7,11 +7,12 @@ import {
   Label,
   Card
 } from 'reactstrap';
-import { authFetch } from '../../helper/APIHelper';
-import DreamModal from './DreamModal';
-import './Dream.css';
 import { Link } from 'react-router-dom';
 import { DreamType } from '../../types/CustomTypes';
+import { authFetch } from '../../helper/APIHelper';
+import DreamModal from './DreamModal';
+import CreateDreamModal from "./CreateDreamModal";
+import './Dream.css';
 
 type User = {
   username: string;
@@ -36,6 +37,7 @@ type User = {
 export default function Dreams() {
   const [dreams, setDreams] = useState<DreamType[]>([]);
   const [selectedDream, setSelectedDream] = useState<DreamType | null>(null);
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
 
   const [title, setTitle] = useState('');
@@ -132,51 +134,6 @@ export default function Dreams() {
         {darkMode ? "Light Mode" : "Dark Mode"}
       </Button>
 
-      <h2>Share Your Dream</h2>
-
-      <Form onSubmit={handleSubmit} className="dream-form">
-        <FormGroup>
-          <Label>Title</Label>
-          <Input value={title} onChange={(e) => setTitle(e.target.value)} />
-        </FormGroup>
-
-        <FormGroup>
-          <Input
-            type="select"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-          >
-            <option value="joy">Joy</option>
-            <option value="despair">Despair</option>
-            <option value="fear">Fear</option>
-            <option value="desire">Desire</option>
-            <option value="love">Love</option>
-            <option value="confusion">Confusion</option>
-            <option value="humiliation">Humiliation</option>
-            <option value="envy">Envy</option>
-            <option value="mundanity">Mundanity</option>
-            <option value="fortune">Fortune</option>
-            <option value="rage">Rage</option>
-            <option value="memory">Memory</option>
-          </Input>
-        </FormGroup>
-
-        <FormGroup>
-          <Label>Dream Content</Label>
-          <Input
-            type="textarea"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-          />
-        </FormGroup>
-
-        {error && <p className="error-text">{error}</p>}
-
-        <Button color="primary" type="submit">
-          Save Dream
-        </Button>
-      </Form>
-
       <h3 className="mt-4">Public Dreams</h3>
 
       <div className="dream-grid">
@@ -231,7 +188,7 @@ export default function Dreams() {
                 )}
 
                 <div className="dream-stats">
-                  <span>💬{dream.Comments?.length || 0}</span>
+                <span>💬{dream.commentCount ?? dream.Comments?.length ?? 0}</span>
                   <span>👁 {dream.views || 0}</span>
                   <span
                     onClick={(e) => {
@@ -250,11 +207,34 @@ export default function Dreams() {
       </div>
 
       {selectedDream && (
-        <DreamModal
-          dream={selectedDream}
-          onClose={() => setSelectedDream(null)}
-        />
-      )}
+  <DreamModal
+    dream={selectedDream}
+    onClose={() => setSelectedDream(null)}
+    onCommentAdded={(dreamId: number) => {
+      setDreams(prev =>
+        prev.map(d =>
+          d.id === dreamId
+            ? { ...d, commentCount: (d.commentCount || 0) + 1 }
+            : d
+        )
+      );
+    }}
+  />
+)} <button
+    className="floating-create-btn"
+    onClick={() => setShowCreateModal(true)
+    }>
++
+</button>
+
+{showCreateModal && (
+  <CreateDreamModal
+    onClose={() => setShowCreateModal(false)}
+    onDreamCreated={(newDream) => {
+      setDreams((prev) => [newDream, ...prev]);
+    }}
+  />
+)}
     </div>
   );
 }

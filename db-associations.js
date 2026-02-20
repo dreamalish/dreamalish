@@ -22,21 +22,21 @@ dreamModel.belongsTo(userModel);
 // Comment Relationships
 // =======================
 
-dreamModel.hasMany(commentModel);
-commentModel.belongsTo(dreamModel);
+dreamModel.hasMany(commentModel, { foreignKey: 'DreamId' });
+commentModel.belongsTo(dreamModel, { foreignKey: 'DreamId' });
 
-userModel.hasMany(commentModel);
-commentModel.belongsTo(userModel);
+userModel.hasMany(commentModel, { foreignKey: 'UserId' });
+commentModel.belongsTo(userModel, { foreignKey: 'UserId' });
 
 // =======================
 // Like Relationships
 // =======================
 
-userModel.hasMany(Like);
-Like.belongsTo(userModel);
+userModel.hasMany(Like, { foreignKey: 'userId' });
+Like.belongsTo(userModel, { foreignKey: 'userId' });
 
-dreamModel.hasMany(Like);
-Like.belongsTo(dreamModel);
+dreamModel.hasMany(Like, { foreignKey: 'dreamId' });
+Like.belongsTo(dreamModel, { foreignKey: 'dreamId' });
 
 // =======================
 

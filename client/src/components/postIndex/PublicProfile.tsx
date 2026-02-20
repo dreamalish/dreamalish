@@ -11,7 +11,7 @@ export default function PublicProfile() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await authFetch(`/profile/u/${username}`);
+        const res = await authFetch(`/api/profile/u/${username}`);
         setUser(res);
       } catch (err) {
         console.error(err);
@@ -49,7 +49,7 @@ export default function PublicProfile() {
       {user.location && <p><strong>Location:</strong> {user.location}</p>}
       {user.bio && <p><strong>Bio:</strong> {user.bio}</p>}
 
-      <p style={{ fontSize: '0.8rem', color: 'gray' }}>
+      <p style={{ fontSize: '1.1rem', color: 'gray' }}>
         Joined {new Date(user.createdAt).toLocaleDateString()}
       </p>
     </div>

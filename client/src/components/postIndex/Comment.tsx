@@ -15,9 +15,10 @@ type CommentType = {
 
 type Props = {
   DreamId: number;
+  onCommentAdded: () => void;
 };
 
-export default function Comment({ DreamId }: Props) {
+export default function Comment({ DreamId, onCommentAdded }: Props) {
   const [Comments, setComments] = useState<CommentType[]>([]);
   const [content, setContent] = useState("");
   const [error, setError] = useState("");
@@ -61,14 +62,15 @@ export default function Comment({ DreamId }: Props) {
       const res = await authFetch("/api/comments/create", {
         method: "POST",
         body: JSON.stringify({
-          DreamId,
-          content,
+          DreamId: DreamId,
+          content: content,
         }),
       });
 
       if (res?.id) {
         setComments([res, ...Comments]);
         setContent("");
+        onCommentAdded(); // 🔥 notify parent
       }
     } catch (err) {
       console.error(err);

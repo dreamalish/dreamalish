@@ -31,7 +31,7 @@ const DreamCard: React.FC<DreamCardProps> = ({
       <CardBody>
         <p>{dream.content}</p>
         <div style={{ display: 'flex', gap: '15px', marginBottom: '10px' }}>
-         <span>💬 {dream.Comments?.length || 0}</span>
+         <span>💬 {dream.commentCount ?? dream.Comments?.length ?? 0}</span>
          <span>👁 {dream.views || 0}</span>
        </div>
         {/* Owner Controls */}
