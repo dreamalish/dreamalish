@@ -1,13 +1,3 @@
-Backend .env:  PG_USER = postgres
-PORT = 3002
-NAME = dreamalish
-JWT_SECRET = ********
-PG_PASS = ‘*********’
-DATABASE_URL = postgresql://postgres:abc123!@localhost/dreamalish
-
-
-db.js:
-
 // db.js
 const { Sequelize } = require('sequelize');
 require('dotenv').config();
@@ -27,4 +17,3 @@ const sequelize = new Sequelize(DATABASE_URL, {
 });
 
 module.exports = sequelize;
-
