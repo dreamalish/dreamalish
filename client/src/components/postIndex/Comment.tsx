@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Form, FormGroup, Input, Button } from "reactstrap";
+import { Link } from 'react-router-dom';
 import { authFetch } from "../../helper/APIHelper";
 import './Comment.css';
 
@@ -91,10 +92,16 @@ export default function Comment({ DreamId, onCommentAdded }: Props) {
           {Comments.map((comment) => (
             <div key={comment.id} className="comment-card">
             <div className="card-body">
+            {comment.User && (
+              <Link
+                to={`/u/${comment.User.username}`}
+                className="comment-user-link"
+                onClick={(e) => e.stopPropagation()}
+                >
               <img
                 src={
                   comment.User?.profilePic
-                    ? `${process.env.REACT_APP_API_URL}/uploads/${comment.User.profilePic}`
+                    ? `${process.env.REACT_APP_API_URL}${comment.User.profilePic}`
                     : "/assets/defaultProfilePic.gif"
                 }
                 alt="avatar"
@@ -105,6 +112,8 @@ export default function Comment({ DreamId, onCommentAdded }: Props) {
                 <strong>@{comment.User?.username || "Unknown"}</strong>
                 <p>{comment.content}</p>
               </div>
+              </Link>
+            )}
             </div>
           </div>
           ))}

@@ -52,7 +52,7 @@ export default class App extends React.Component<{}, State> {
 
     return (
      <div style={{ fontFamily: 'sans-serif' }}>
-        <h1 style={{ padding: '1rem' }}> dreamlish</h1>
+        <h1 style={{ padding: '1rem' }}> dreamalish</h1>
 
         {!token ? (
           <>
