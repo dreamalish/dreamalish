@@ -1,4 +1,3 @@
-// db.js
 const { Sequelize } = require('sequelize');
 require('dotenv').config();
 
@@ -8,12 +7,14 @@ const sequelize = new Sequelize(DATABASE_URL, {
   dialect: 'postgres',
   protocol: 'postgres',
   logging: false,
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false
-    }
-  }
+  dialectOptions: process.env.NODE_ENV === 'production'
+    ? {
+        ssl: {
+          require: true,
+          rejectUnauthorized: false
+        }
+      }
+    : {}
 });
 
 module.exports = sequelize;
