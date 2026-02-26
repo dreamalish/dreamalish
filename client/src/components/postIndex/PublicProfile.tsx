@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { authFetch } from '../../helper/APIHelper';
+import AvatarImage from "../common/AvatarImage";
+
 
 export default function PublicProfile() {
   const { username } = useParams<{ username: string }>();
@@ -28,22 +30,19 @@ export default function PublicProfile() {
 
   const avatarUrl = user.profilePic
     ? `${process.env.REACT_APP_API_URL}${user.profilePic}`
-    : '/assets/defaultProfilePic.gif';
+    : '/assets/defaultProfilePic.jpg';
 
   return (
     <div style={{ maxWidth: '500px', margin: '2rem auto' }}>
 
-      <img
-        src={avatarUrl}
-        alt="avatar"
-        style={{
-          width: '120px',
-          height: '120px',
-          borderRadius: '50%',
-          objectFit: 'cover',
-          marginBottom: '1rem'
-        }}
-      />
+<AvatarImage
+  src={user?.profilePic}
+  alt={user?.username}
+  size={100}
+  className="profile-avatar"
+/>
+
+
       <h2>{user.username}</h2>
       {user.location && <p><strong>Location:</strong> {user.location}</p>}
       {user.bio && <p><strong>Bio:</strong> {user.bio}</p>}

@@ -349,3 +349,10 @@
   transform: scale(1.1);
   box-shadow: 0 12px 30px rgba(0,0,0,0.35);
 }
+
+.modal-dream-stats {
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+  font-size: 1.1rem;
+}

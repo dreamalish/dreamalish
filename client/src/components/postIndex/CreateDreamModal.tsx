@@ -1,135 +1,96 @@
-import React, { useState } from "react";
-import {
-  Button,
-  Form,
-  FormGroup,
-  Input,
-  Label
-} from "reactstrap";
-import "./CreateDreamModal.css";
+// src/components/dreams/CreateDreamModal.tsx
+import React, { useState } from 'react';
+import { Button, Modal, ModalHeader, ModalBody, Form, FormGroup, Input, Label } from 'reactstrap';
+import { authFetch } from '../../helper/APIHelper';
+import { DreamType } from '../../types/CustomTypes';
 
-interface Props {
+type Props = {
   onClose: () => void;
-  onDreamCreated: (newDream: any) => void;
-}
+  onDreamCreated: (dream: DreamType) => void;
+};
 
-const CreateDreamModal: React.FC<Props> = ({ onClose, onDreamCreated }) => {
-  const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("joy");
-  const [content, setContent] = useState("");
+export default function CreateDreamModal({ onClose, onDreamCreated }: Props) {
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  const [category, setCategory] = useState('joy');
   const [isPrivate, setIsPrivate] = useState(false);
-  const [isNSFW, setIsNSFW] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    if (!title || !content) {
+      setError('Title and content required.');
+      return;
+    }
+    const payload = { title, content, category };
+    console.log("CreateDream POST payload:", payload);
     try {
-      const response = await fetch("http://localhost:3002/api/dreams/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: localStorage.getItem("token") || ""
-        },
-        body: JSON.stringify({
-          title,
-          category,
-          content,
-          isPrivate,
-          isNSFW
-        })
+      const res = await authFetch('/api/dreams/create', {
+        method: 'POST',
+        body: JSON.stringify(payload),
       });
+      console.log("CreateDream POST response:", res);
+      // Add new dream only if backend responds successfully
+    // if (res) onDreamCreated(res);
 
-      if (!response.ok) {
-        throw new Error("Failed to create dream");
+      if (res?.id) {
+        onDreamCreated(res); // <-- instantly updates Dreams
+        setTitle('');
+        setContent('');
+        setCategory('joy');
+        setIsPrivate(false);
+        setError('');
+        onClose();
       }
-
-      const createdDream = await response.json();
-
-      onDreamCreated(createdDream);
-      onClose();
-
     } catch (err) {
-      console.error("CREATE DREAM ERROR:", err);
+      setError('Failed to create dream.');
     }
   };
 
   return (
-    <div className="create-modal-overlay">
-      <div className="create-modal">
-        <button className="close-btn" onClick={onClose}>×</button>
-
-        <h4>Share Your Dream</h4>
-
+    <Modal isOpen toggle={onClose}>
+      <ModalHeader toggle={onClose}>Create Dream</ModalHeader>
+      <ModalBody>
         <Form onSubmit={handleSubmit}>
-          <Input
-            type="text"
-            placeholder="Dream title..."
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-          />
+          <FormGroup>
+            <Label>Title</Label>
+            <Input value={title} onChange={(e) => setTitle(e.target.value)} />
+          </FormGroup>
 
           <FormGroup>
-            <Input
-              type="select"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-            >
-              <option value="joy">Joy</option>
-              <option value="despair">Despair</option>
-              <option value="fear">Fear</option>
-              <option value="desire">Desire</option>
-              <option value="love">Love</option>
-              <option value="confusion">Confusion</option>
-              <option value="humiliation">Humiliation</option>
-              <option value="envy">Envy</option>
-              <option value="mundanity">Mundanity</option>
-              <option value="fortune">Fortune</option>
-              <option value="rage">Rage</option>
-              <option value="memory">Memory</option>
+            <Label>Content</Label>
+            <Input type="textarea" value={content} onChange={(e) => setContent(e.target.value)} />
+          </FormGroup>
+
+          <FormGroup>
+            <Label>Category</Label>
+            <Input type="select" value={category} onChange={(e) => setCategory(e.target.value)}>
+            <option value={"joy"}>Joy</option>
+                            <option value={"despair"}>Despair</option>
+                            <option value={"fear"}>Fear</option>
+                            <option value={"desire"}>Desire</option>
+                            <option value={"love"}>Love</option>
+                            <option value={"confusion"}>Confusion</option>
+                            <option value={"humiliation"}>Humiliation</option>
+                            <option value={"envy"}>Envy</option>
+                            <option value={"mundanity"}>Mundanity</option>
+                            <option value={"fortune"}>Fortune</option>
+                            <option value={"rage"}>Rage</option>
+                            <option value={"memory"}>Memory</option>
             </Input>
           </FormGroup>
 
-          <FormGroup>
-            <textarea
-              placeholder="Describe your dream..."
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              required
-            />
-          </FormGroup>
-
-          <FormGroup>
-            <Label>
-              <Input
-                type="checkbox"
-                checked={isPrivate}
-                onChange={() => setIsPrivate(!isPrivate)}
-              />
-              Private
+          <FormGroup check>
+            <Label check>
+              <Input type="checkbox" checked={isPrivate} onChange={() => setIsPrivate(!isPrivate)} /> Private
             </Label>
           </FormGroup>
 
-          <FormGroup>
-            <Label>
-              <Input
-                type="checkbox"
-                checked={isNSFW}
-                onChange={() => setIsNSFW(!isNSFW)}
-              />
-              NSFW
-            </Label>
-          </FormGroup>
+          {error && <p className="text-danger">{error}</p>}
 
-          <FormGroup>
-            <Button type="submit" className="submit-btn">
-              Post Dream
-            </Button>
-          </FormGroup>
+          <Button color="primary" type="submit" className="mt-2">Create</Button>
         </Form>
-      </div>
-    </div>
+      </ModalBody>
+    </Modal>
   );
-};
-
-export default CreateDreamModal;
+}

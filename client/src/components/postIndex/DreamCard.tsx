@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, CardBody, CardHeader, Button } from 'reactstrap';
 import { UserType, DreamType } from '../../types/CustomTypes';
+import AvatarImage from '../common/AvatarImage';
 import './Dream.css';
 
 type DreamCardProps = {
@@ -25,6 +26,10 @@ const DreamCard: React.FC<DreamCardProps> = ({
   return (
     <Card className="mb-3">
       <CardHeader>
+      <AvatarImage
+        src={dream.User?.profilePic}
+        size={45}
+        />
         <strong>{dream.title}</strong> — {dream.category}
       </CardHeader>
 

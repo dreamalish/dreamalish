@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   Form,
   FormGroup,
@@ -12,14 +12,20 @@ import {
 } from 'reactstrap';
 import { authFetch } from '../../helper/APIHelper';
 import APIURL from '../../helper/Environment';
+import { UserContext, User } from '../../contexts/UserContext';
+import AvatarImage from "../common/AvatarImage";
+import './Profile.css';
+
 
 export default function Profile() {
+  const { currentUser, setCurrentUser } = useContext(UserContext);
+
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [bio, setBio] = useState('');
   const [location, setLocation] = useState('');
   const [profilePic, setProfilePic] = useState<File | null>(null);
-  const [currentAvatar, setCurrentAvatar] = useState('/assets/defaultProfilePic.gif');
+  const [currentAvatar, setCurrentAvatar] = useState('/assets/defaultProfilePic.jpg');
 
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -27,51 +33,46 @@ export default function Profile() {
   const [message, setMessage] = useState('');
 
   // ===============================
-  // Fetch Logged-in User Profile
+  // Fetch Profile
   // ===============================
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const data = await authFetch('/api/profile/me');
-  
-        console.log("Profile data:", data);
-  
-        if (!data) {
-          console.error("No profile data returned");
-          return;
-        }
-  
+
         setUsername(data.username || '');
         setEmail(data.email || '');
         setBio(data.bio || '');
         setLocation(data.location || '');
-  
+
         if (data.profilePic) {
-          setCurrentAvatar(
-            `${process.env.REACT_APP_API_URL}${data.profilePic}`
+          const avatarURL = `${APIURL}${data.profilePic}`;
+          setCurrentAvatar(avatarURL);
+
+          // 🔥 Update global context immediately
+          setCurrentUser((prev: import('../../contexts/UserContext').User | null) =>
+            prev ? { ...prev, profilePic: avatarURL } : prev
           );
         }
-  
       } catch (err) {
-        console.error('Error loading profile:', err);
+        console.error(err);
       } finally {
         setLoading(false);
       }
     };
-  
-    fetchProfile();   // ✅ YES KEEP THIS
-  
-  }, []);
+
+    fetchProfile();
+  }, [setCurrentUser]);
 
   // ===============================
-  // Handle Avatar Selection
+  // Avatar Preview
   // ===============================
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setProfilePic(e.target.files[0]);
+      const file = e.target.files[0];
+      setProfilePic(file);
 
-      // Preview immediately
-      const previewURL = URL.createObjectURL(e.target.files[0]);
+      const previewURL = URL.createObjectURL(file);
       setCurrentAvatar(previewURL);
     }
   };
@@ -81,70 +82,70 @@ export default function Profile() {
   // ===============================
   const handleSave = async () => {
     setSaving(true);
-    setMessage('');
-
+    setMessage("");
+  
     try {
-      // Upload avatar if changed
+      // Upload avatar if exists
       if (profilePic) {
         const formData = new FormData();
-        formData.append('avatar', profilePic);
-
-        const avatarRes = await authFetch('/api/profile/avatar', {
-          method: 'POST',
+        formData.append("avatar", profilePic);
+  
+        const avatarRes = await authFetch("/api/profile/avatar", {
+          method: "POST",
           body: formData,
         });
-
+  
         if (avatarRes?.file) {
-          setCurrentAvatar(
-            `${APIURL}${avatarRes.file}`
+          const uploadedPath = `/uploads/${avatarRes.file}`;
+  
+          setCurrentAvatar(uploadedPath);
+  
+          setCurrentUser(prev =>
+            prev ? { ...prev, profilePic: uploadedPath } : prev
           );
         }
-        console.log('APIURL:', APIURL);
+  
         setProfilePic(null);
       }
-
-      // Update profile fields
-      await authFetch('/api/profile/update', {
-        method: 'PUT',
-        body: JSON.stringify({
-          email,
-          bio,
-          location,
-        }),
+  
+      // Update other profile fields
+      await authFetch("/api/profile/update", {
+        method: "PUT",
+        body: JSON.stringify({ email, bio, location }),
       });
-
-      setMessage('Profile updated successfully!');
+  
+      setCurrentUser(prev =>
+        prev ? { ...prev, email, bio, location } : prev
+      );
+  
+      setMessage("Profile updated successfully!");
       setIsEditing(false);
-      console.log("Final avatar URL:", currentAvatar);
-
-      setTimeout(() => setMessage(''), 3000);
+  
+      setTimeout(() => setMessage(""), 3000);
+  
     } catch (err) {
-      console.error('Profile update failed:', err);
-      setMessage('Failed to update profile.');
+      console.error(err);
+      setMessage("Failed to update profile.");
     } finally {
       setSaving(false);
     }
   };
+  
 
-  if (loading) return <p style={{ textAlign: 'center' }}>Loading profile...</p>;
+  if (loading) return <p>Loading profile...</p>;
 
   return (
     <div style={{ maxWidth: '500px', margin: '2rem auto', textAlign: 'center' }}>
       <h2>My Profile</h2>
 
-      <img
-        src={currentAvatar}
-        alt="avatar"
-        style={{
-          width: '120px',
-          height: '120px',
-          borderRadius: '50%',
-          objectFit: 'cover',
-          marginBottom: '1rem',
-        }}
-      />
+      <AvatarImage
+  src={currentAvatar}
+  alt="avatar"
+  size={120}
+  className="profile-avatar"
+/>
 
-      {/* VIEW MODE */}
+
       <div style={{ textAlign: 'left', marginBottom: '1rem' }}>
         <p><strong>Username:</strong> {username}</p>
         <p><strong>Email:</strong> {email}</p>
@@ -156,11 +157,8 @@ export default function Profile() {
         Edit Profile
       </Button>
 
-      {message && (
-        <p style={{ marginTop: '1rem', fontWeight: 'bold' }}>{message}</p>
-      )}
+      {message && <p>{message}</p>}
 
-      {/* EDIT MODAL */}
       <Modal isOpen={isEditing} toggle={() => setIsEditing(false)}>
         <ModalHeader toggle={() => setIsEditing(false)}>
           Edit Profile
@@ -170,29 +168,17 @@ export default function Profile() {
           <Form>
             <FormGroup>
               <Label>Email</Label>
-              <Input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+              <Input value={email} onChange={(e) => setEmail(e.target.value)} />
             </FormGroup>
 
             <FormGroup>
               <Label>Location</Label>
-              <Input
-                type="text"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-              />
+              <Input value={location} onChange={(e) => setLocation(e.target.value)} />
             </FormGroup>
 
             <FormGroup>
               <Label>Bio</Label>
-              <Input
-                type="textarea"
-                value={bio}
-                onChange={(e) => setBio(e.target.value)}
-              />
+              <Input type="textarea" value={bio} onChange={(e) => setBio(e.target.value)} />
             </FormGroup>
 
             <FormGroup>
@@ -203,19 +189,11 @@ export default function Profile() {
         </ModalBody>
 
         <ModalFooter>
-          <Button
-            color="primary"
-            onClick={handleSave}
-            disabled={saving}
-          >
+          <Button color="primary" onClick={handleSave} disabled={saving}>
             {saving ? 'Saving...' : 'Save'}
           </Button>
 
-          <Button
-            color="secondary"
-            onClick={() => setIsEditing(false)}
-            disabled={saving}
-          >
+          <Button color="secondary" onClick={() => setIsEditing(false)}>
             Cancel
           </Button>
         </ModalFooter>

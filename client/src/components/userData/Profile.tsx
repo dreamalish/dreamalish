@@ -28,7 +28,7 @@ export default function Profile() {
         src={
           user.profilePic
             ? `${process.env.REACT_APP_API_URL}/uploads/${user.profilePic}`
-            : "/defaultProfilePic.gif"
+            : "/defaultProfilePic.jpg"
         }
         alt="avatar"
         width="80"

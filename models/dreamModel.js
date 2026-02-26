@@ -23,13 +23,26 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       defaultValue: false
     },
+
     views: {
       type: DataTypes.INTEGER,
       defaultValue: 0
     },
+
     likes: {
       type: DataTypes.INTEGER,
       defaultValue: 0
+    },
+    
+    visibility: {
+      type: DataTypes.ENUM("public", "private"),
+      defaultValue: "public"
+    },
+
+    UserId: {
+      type: DataTypes.INTEGER,
+      allowNull: false
     }
+    
   });
 };

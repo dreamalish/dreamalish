@@ -1,17 +1,22 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Modal, ModalBody, ModalHeader } from "reactstrap";
 import Comment from "./Comment";
 import { DreamType } from "../../types/CustomTypes";
-import { authFetch } from '../../helper/APIHelper';
 import "./Dream.css";
 
 type Props = {
   dream: DreamType | null;
   onClose: () => void;
-  onCommentAdded: (dreamId: number)=>void;
+  onCommentAdded?: (dreamId: number, newComment: any) => void;
+  onToggleLike?: (dreamId: number) => void;
 };
 
-const DreamModal: React.FC<Props> = ({ dream, onClose, onCommentAdded }) => {
+const DreamModal: React.FC<Props> = ({
+  dream,
+  onClose,
+  onCommentAdded,
+  onToggleLike,
+}) => {
 
   if (!dream) return null;
 
@@ -32,15 +37,33 @@ const DreamModal: React.FC<Props> = ({ dream, onClose, onCommentAdded }) => {
       <ModalBody>
         <div className="modal-dream-content">
           <p>{dream.content}</p>
-          <div>👁 {dream.views || 0 }</div>
+          
+          {/* Views + Likes */}
+  <div className="modal-dream-stats">
+    <span>👁 {dream.views || 0}</span>
+    <span
+      style={{ cursor: 'pointer', marginLeft: '10px' }}
+      onClick={() => {
+        if (!dream.liked && onToggleLike) {
+          onToggleLike(dream.id!);
+        }
+      }}
+    >
+      {dream.liked ? '❤️' : '🤍'} {dream.likes || 0}
+    </span>
+  </div>
         </div>
 
         <hr />
 
         <Comment
           DreamId={dream.id!}
-          onCommentAdded={() => onCommentAdded(dream.id!)}
-/>
+          onCommentAdded={(newComment: any) => {
+            if (onCommentAdded) {
+              onCommentAdded(dream.id!, newComment);
+            }
+          }}
+        />
       </ModalBody>
     </Modal>
   );

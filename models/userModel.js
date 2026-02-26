@@ -40,6 +40,12 @@ module.exports = (sequelize, DataTypes) => {
     location: {
       type: DataTypes.STRING,
       allowNull: true
+    },
+    
+    profileVisibility: {
+      type: DataTypes.ENUM("public", "private"),
+      defaultValue: "public"
     }
+    
   });
 };

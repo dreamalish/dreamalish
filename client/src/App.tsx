@@ -1,13 +1,12 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Auth from '../src/components/auth/Auth';
-import PostIndex from './components/postIndex/PostIndex';
 import Profile from './components/postIndex/Profile';
 import SiteNav from './components/site/SiteNav';
 import PublicProfile from './components/postIndex/PublicProfile';
 import './App.css';
-import logo from '../src/assets/image.jpg';
 import Dreams from './components/postIndex/Dreams';
+import { UserProvider } from './contexts/UserContext';
 
 
 type State = {

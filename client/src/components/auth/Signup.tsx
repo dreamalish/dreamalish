@@ -1,7 +1,7 @@
 import React, { FormEvent } from 'react';
 import { Form, FormGroup, Label, Button, Input, Row, Col } from 'reactstrap';
 import APIURL from '../../helper/Environment';
-import DefaultProfilePic from '../../assets/defaultProfilePic.gif';
+import DefaultProfilePic from '../../assets/defaultProfilePic.jpg';
 
 
 type Props = {

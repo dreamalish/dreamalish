@@ -30,6 +30,10 @@
     "sequelize": "^6.37.7"
   },
   "devDependencies": {
-    "nodemon": "^3.1.11"
+    "@types/ms": "^2.1.0",
+    "@types/node": "^25.3.0",
+    "nodemon": "^3.1.11",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.9.3"
   }
 }

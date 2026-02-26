@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Input } from "reactstrap";
 import { useNavigate } from "react-router-dom";
 import { authFetch } from "../helper/APIHelper";
+import AvatarImage from "./common/AvatarImage"; // adjust path if needed
 import '../App.css';
 
 interface User {
@@ -28,6 +29,7 @@ const SearchUsers: React.FC = () => {
         searchUsers(query);
       } else {
         setResults([]);
+        setShowDropdown(false);
       }
     }, 300);
 
@@ -40,9 +42,10 @@ const SearchUsers: React.FC = () => {
       setResults(Array.isArray(res) ? res : []);
       setShowDropdown(true);
       setSelectedIndex(-1);
-      console.log("Search response:", res);
     } catch (err) {
       console.error("Search failed", err);
+      setResults([]);
+      setShowDropdown(false);
     }
   };
 
@@ -67,9 +70,7 @@ const SearchUsers: React.FC = () => {
     if (!showDropdown || results.length === 0) return;
 
     if (e.key === "ArrowDown") {
-      setSelectedIndex((prev) =>
-        prev < results.length - 1 ? prev + 1 : prev
-      );
+      setSelectedIndex((prev) => (prev < results.length - 1 ? prev + 1 : prev));
     }
 
     if (e.key === "ArrowUp") {
@@ -77,17 +78,22 @@ const SearchUsers: React.FC = () => {
     }
 
     if (e.key === "Enter" && selectedIndex >= 0) {
-      navigate(`/profile/${results[selectedIndex].username}`);
-      setShowDropdown(false);
-      setQuery("");
+      const user = results[selectedIndex];
+      navigateToUser(user.username);
     }
   };
 
+  // ===============================
+  // Navigate helper
+  // ===============================
+  const navigateToUser = (username: string) => {
+    navigate(`/u/${username}`);
+    setShowDropdown(false);
+    setQuery("");
+  };
+
   return (
-    <div
-      ref={wrapperRef}
-      style={{ position: "relative", width: "250px" }}
-    >
+    <div ref={wrapperRef} style={{ position: "relative", width: "250px" }}>
       <Input
         type="text"
         placeholder="Search users..."
@@ -100,30 +106,22 @@ const SearchUsers: React.FC = () => {
       {showDropdown && (
         <div className="search-dropdown">
           {results.length === 0 ? (
-            <div className="search-item no-results">
-              No users found
-            </div>
+            <div className="search-item no-results">No users found</div>
           ) : (
             results.map((user, index) => (
               <div
                 key={user.id}
-                className={`search-item ${
-                  index === selectedIndex ? "active" : ""
-                }`}
-                onClick={() => {
-                  navigate(`/profile/${user.username}`);
-                  setShowDropdown(false);
-                  setQuery("");
+                className={`search-item ${index === selectedIndex ? "active" : ""}`}
+                onMouseDown={(e) => {
+                  // Fires before dropdown closes
+                  e.preventDefault();
+                  navigateToUser(user.username);
                 }}
               >
-                <img
-                  src={
-                    user.profilePic
-                      ? `${process.env.REACT_APP_API_URL}${user.profilePic}`
-                      : "/assets/defaultProfilePic.gif"
-                  }
-                  alt="avatar"
-                  className="search-avatar"
+                <AvatarImage
+                  src={user.profilePic}
+                  size={28}
+                  className="rounded-circle me-2"
                 />
                 @{user.username}
               </div>

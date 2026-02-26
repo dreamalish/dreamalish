@@ -10,6 +10,7 @@ const userController = require('./controllers/userController');
 const dreamController = require('./controllers/dreamController');
 const commentController = require('./controllers/commentController');
 const profileController = require('./controllers/profileController');
+const privateProfileRoutes = require("./routes/privateProfileRoutes");
 
 app.use(express.json());
 app.use(cors());
@@ -34,6 +35,7 @@ app.use('/api/users', require('./controllers/userController'));
 app.use('/api/dreams', require('./middleware/validate-session'), dreamController);
 app.use('/api/comments', require('./middleware/validate-session'), commentController);
 app.use('/api/profile', require('./middleware/validate-session'), profileController);
+app.use("/private-profile", privateProfileRoutes);
 
 
 /* =======================================================
@@ -60,10 +62,10 @@ if (process.env.NODE_ENV === 'production') {
 sequelize.authenticate()
   .then(() => {
     console.log('Connected to Postgres database');
-    return sequelize.sync();
+    return sequelize.sync({alter:true});
   })
   .then(() => {
-    console.log('DB synced');                // optional but nice
+    console.log('DB synced');
     const PORT = process.env.PORT || 3002;
     app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
   })

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Form, FormGroup, Input, Button } from "reactstrap";
 import { Link } from 'react-router-dom';
 import { authFetch } from "../../helper/APIHelper";
+import AvatarImage from "../common/AvatarImage";
 import './Comment.css';
 
 type CommentType = {
@@ -16,7 +17,7 @@ type CommentType = {
 
 type Props = {
   DreamId: number;
-  onCommentAdded: () => void;
+  onCommentAdded?: (newComment: CommentType) => void;
 };
 
 export default function Comment({ DreamId, onCommentAdded }: Props) {
@@ -70,8 +71,12 @@ export default function Comment({ DreamId, onCommentAdded }: Props) {
 
       if (res?.id) {
         setComments([res, ...Comments]);
-        setContent("");
-        onCommentAdded(); // 🔥 notify parent
+setContent("");
+
+if (onCommentAdded) {
+  onCommentAdded(res);
+}
+
       }
     } catch (err) {
       console.error(err);
@@ -98,15 +103,12 @@ export default function Comment({ DreamId, onCommentAdded }: Props) {
                 className="comment-user-link"
                 onClick={(e) => e.stopPropagation()}
                 >
-              <img
-                src={
-                  comment.User?.profilePic
-                    ? `${process.env.REACT_APP_API_URL}${comment.User.profilePic}`
-                    : "/assets/defaultProfilePic.gif"
-                }
-                alt="avatar"
-                className="comment-avatar"
-              />
+              <AvatarImage
+              src={comment.User?.profilePic}
+              alt={comment.User?.username}
+              className="comment-avatar"
+/>
+
           
               <div>
                 <strong>@{comment.User?.username || "Unknown"}</strong>
