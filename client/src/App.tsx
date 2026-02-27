@@ -1,68 +1,41 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import Auth from '../src/components/auth/Auth';
+import Auth from './components/auth/Auth';
 import Profile from './components/postIndex/Profile';
 import SiteNav from './components/site/SiteNav';
 import PublicProfile from './components/postIndex/PublicProfile';
 import './App.css';
 import Dreams from './components/postIndex/Dreams';
-import { UserProvider } from './contexts/UserContext';
-
 
 type State = {
   token: string;
-  userId: number | null;
-  user: any | null;
 };
 
 export default class App extends React.Component<{}, State> {
   state: State = {
     token: localStorage.getItem('token') || '',
-    userId: null,
-    user: null
   };
-
-  componentDidMount() {
-    this.decodeUser();
-  }
 
   updateToken = (newToken: string) => {
     localStorage.setItem('token', newToken);
-    this.setState({ token: newToken }, this.decodeUser);
+    this.setState({ token: newToken });
   };
 
-  updateUser = (user: any) => {
-    this.setState({ user, userId: user.id });
-  };
-  
   logout = () => {
     localStorage.removeItem('token');
-    this.setState({ token: '', userId: null });
-  };
-
-  decodeUser = () => {
-    const token = localStorage.getItem('token');
-    if (!token) return;
-
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      this.setState({ userId: payload.id });
-    } catch {
-      this.logout();
-    }
+    this.setState({ token: '' });
   };
 
   render() {
     const { token } = this.state;
 
     return (
-     <div style={{ fontFamily: 'sans-serif' }}>
-        <h1 style={{ padding: '1rem' }}> dreamalish</h1>
+      <div style={{ fontFamily: 'sans-serif' }}>
+        <h1 style={{ padding: '1rem' }}>dreamalish</h1>
 
         {!token ? (
           <>
-            <Auth updateToken={this.updateToken} 
-            updateUser={this.updateUser}/>
+            <Auth updateToken={this.updateToken} />
             <hr />
           </>
         ) : (
@@ -70,7 +43,7 @@ export default class App extends React.Component<{}, State> {
             <SiteNav logout={this.logout} />
 
             <Routes>
-              <Route path="/" element={<Dreams/>} />
+              <Route path="/" element={<Dreams />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/u/:username" element={<PublicProfile />} />
               <Route path="*" element={<Navigate to="/" />} />
@@ -81,4 +54,3 @@ export default class App extends React.Component<{}, State> {
     );
   }
 }
-

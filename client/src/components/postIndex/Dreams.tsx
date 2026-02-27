@@ -9,6 +9,9 @@ import './Dream.css';
 import { UserContext } from '../../contexts/UserContext';
 import AvatarImage from "../common/AvatarImage";
 
+type Props = {
+  user: any | null;
+};
 
 export default function Dreams() {
   const { currentUser } = useContext(UserContext)!;
@@ -139,7 +142,7 @@ export default function Dreams() {
                 <div className="dream-overlay"><span>View Dream</span></div>
                 <div className="dream-preview">
                   <h4>{dream.title}</h4>
-                  <h5>{dream.category}</h5>
+                  <h6><i>{dream.category}</i></h6>
                   <p>{dream.content}</p>
                 </div>
 

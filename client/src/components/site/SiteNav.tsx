@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import SearchUsers from '../SearchUsers';
 import AvatarImage from '../common/AvatarImage';
 import { UserContext } from '../../contexts/UserContext';
+import defaultProfilePic from '../../assets/defaultProfilePic.jpg';
 
 export default function SiteNav({ logout }: { logout: () => void }) {
   const { currentUser } = useContext(UserContext);
@@ -32,7 +33,7 @@ export default function SiteNav({ logout }: { logout: () => void }) {
           {currentUser && (
             <NavItem className="me-3">
               <AvatarImage
-                src={currentUser.profilePic}
+                src={currentUser?.profilePic || defaultProfilePic}
                 size={32}
                 className="rounded-circle"
                 onClick={(e) => e.stopPropagation()}

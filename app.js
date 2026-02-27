@@ -18,7 +18,7 @@ const profileController = require('./controllers/profileController');
 const privateProfileRoutes = require("./routes/privateProfileRoutes");
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production'
-    ? 'https://dreamalish-onrender.com' // replace with Render URL
+    ? 'https://dreamalish.onrender.com' // replace with Render URL
     : 'http://localhost:3000',
   methods: ['GET','POST','PUT','DELETE','OPTIONS'],
   credentials: true,

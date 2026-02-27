@@ -1,12 +1,12 @@
 import React, { Component, FormEvent } from 'react';
 import { Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import { authFetch } from '../../helper/APIHelper';
-import logo from '../../assets/image.jpg'; 
-import defaultProfilePic from '../../assets/defaultProfilePic.jpg'; // default avatar
+import { UserContext } from '../../contexts/UserContext';
+import logo from '../../assets/image.jpg';
+import defaultProfilePic from '../../assets/defaultProfilePic.jpg';
 
 type Props = {
     updateToken: (newToken: string) => void;
-    updateUser: (user: any) => void; // add a prop to update global user state
 };
 
 type State = {
@@ -19,6 +19,10 @@ type State = {
 };
 
 export default class Auth extends Component<Props, State> {
+    static contextType = UserContext;
+    context!: React.ContextType<typeof UserContext>;
+
+
     constructor(props: Props) {
         super(props);
         this.state = {
@@ -47,12 +51,12 @@ export default class Auth extends Component<Props, State> {
 
             const body = isLogin
                 ? { username, password }
-                : { 
-                    username, 
-                    email, 
-                    password, 
-                    profilePic: defaultProfilePic, // assign default automatically
-                    nsfwOk 
+                : {
+                      username,
+                      email,
+                      password,
+                      profilePic: '/uploads/defaultProfilePic.jpg',
+                      nsfwOk
                   };
 
             const data = await authFetch(url, {
@@ -60,16 +64,23 @@ export default class Auth extends Component<Props, State> {
                 body: JSON.stringify(body)
             });
 
-            if (data.sessionToken && data.user) {
-                // store token
-                localStorage.setItem('token', data.sessionToken);
-                this.props.updateToken(data.sessionToken);
-
-                // update user immediately (for SiteNav)
-                this.props.updateUser(data.user);
-            } else {
+            if (!data.sessionToken) {
                 this.setState({ error: isLogin ? 'Login failed.' : 'Signup failed.' });
+                return;
             }
+
+            // Store token
+            localStorage.setItem('token', data.sessionToken);
+            this.props.updateToken(data.sessionToken);
+
+            // 🔥 Immediately fetch profile and update context
+            const profile = await authFetch('/api/profile/me');
+
+            this.context.setCurrentUser({
+                ...profile,
+                profilePic: profile.profilePic || defaultProfilePic
+            });
+
         } catch (err) {
             console.error('Auth error', err);
             this.setState({ error: 'Request failed.' });

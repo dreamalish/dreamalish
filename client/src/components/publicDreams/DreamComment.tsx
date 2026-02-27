@@ -57,7 +57,7 @@ export default class DreamComment extends React.Component<
     return (
       <Modal isOpen={true}>
         <div className="p-3">
-          <h4>Comment on {this.props.dream.title}</h4>
+          Comment on {this.props.dream.title}
           <Form onSubmit={(e) => this.handleSubmit(e)}>
             <FormGroup>
               <Input
