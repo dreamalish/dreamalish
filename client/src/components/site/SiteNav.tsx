@@ -33,7 +33,7 @@ export default function SiteNav({ logout }: { logout: () => void }) {
           {currentUser && (
             <NavItem className="me-3">
               <AvatarImage
-                src={currentUser?.profilePic || defaultProfilePic}
+                src={currentUser?.profilePic}
                 size={32}
                 className="rounded-circle"
                 onClick={(e) => e.stopPropagation()}

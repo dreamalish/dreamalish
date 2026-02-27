@@ -45,7 +45,8 @@ router.post('/create', async (req, res) => {
     const newUser = await userModel.create({
       username,
       email,
-      passwordhash: hash
+      passwordhash: hash,
+      profilePic: '/uploads/defaultProfilePic.jpg'
     });
 
     const token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET, { expiresIn: '1d' });
