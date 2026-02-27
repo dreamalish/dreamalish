@@ -30,6 +30,7 @@ const SearchUsers: React.FC = () => {
       } else {
         setResults([]);
         setShowDropdown(false);
+        setSelectedIndex(-1);
       }
     }, 300);
 
@@ -56,32 +57,12 @@ const SearchUsers: React.FC = () => {
     const handleClickOutside = (event: MouseEvent) => {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
         setShowDropdown(false);
+        setSelectedIndex(-1);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  // ===============================
-  // Keyboard Navigation
-  // ===============================
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!showDropdown || results.length === 0) return;
-
-    if (e.key === "ArrowDown") {
-      setSelectedIndex((prev) => (prev < results.length - 1 ? prev + 1 : prev));
-    }
-
-    if (e.key === "ArrowUp") {
-      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : 0));
-    }
-
-    if (e.key === "Enter" && selectedIndex >= 0) {
-      const user = results[selectedIndex];
-      navigateToUser(user.username);
-    }
-  };
 
   // ===============================
   // Navigate helper
@@ -90,6 +71,29 @@ const SearchUsers: React.FC = () => {
     navigate(`/u/${username}`);
     setShowDropdown(false);
     setQuery("");
+    setSelectedIndex(-1);
+  };
+
+  // ===============================
+  // Keyboard Navigation
+  // ===============================
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!showDropdown || results.length === 0) return;
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault(); // prevent cursor from moving
+      setSelectedIndex((prev) => (prev < results.length - 1 ? prev + 1 : 0));
+    }
+
+    if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : results.length - 1));
+    }
+
+    if (e.key === "Enter" && selectedIndex >= 0) {
+      const selectedUser = results[selectedIndex];
+      navigateToUser(selectedUser.username);
+    }
   };
 
   return (
@@ -113,7 +117,7 @@ const SearchUsers: React.FC = () => {
                 key={user.id}
                 className={`search-item ${index === selectedIndex ? "active" : ""}`}
                 onMouseDown={(e) => {
-                  // Fires before dropdown closes
+                  // Fires BEFORE blur closes dropdown
                   e.preventDefault();
                   navigateToUser(user.username);
                 }}
