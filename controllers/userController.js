@@ -22,7 +22,7 @@ router.post('/login', async (req, res) => {
         id: user.id,
         username: user.username,
         email: user.email,
-        profilePic: 
+        profilePic: user.profilePic   // 👈 ADD THIS
       },
       token
     });
