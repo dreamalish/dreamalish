@@ -46,15 +46,21 @@ router.post('/create', async (req, res) => {
       username,
       email,
       passwordhash: hash,
-      profilePic: '/uploads/defaultProfilePic.jpg'
+      profilePic:  req.body.profilePic || '/uploads/defaultProfilePic.jpg'
     });
 
     const token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET, { expiresIn: '1d' });
 
-    res.status(201).json({
-      sessionToken: token,
-      user: newUser.username
-    });
+    const host = req.protocol + '://' + req.get('host'); // e.g., https://dreamalish.onrender.com
+
+    const userResponse = {
+    ...newUser.toObject(),
+    profilePic: newUser.profilePic.startsWith('/uploads/')
+    ? host + newUser.profilePic
+    : newUser.profilePic
+  };
+  
+  res.status(201).json({ user: userResponse, sessionToken: token });
 
   } catch (err) {
     console.error("REGISTER ERROR:", err);

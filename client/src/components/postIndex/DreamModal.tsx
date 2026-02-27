@@ -30,8 +30,9 @@ const DreamModal: React.FC<Props> = ({
       backdropClassName="dream-modal-backdrop"
     >
       <ModalHeader toggle={onClose}>
-        {dream.title}
-        {dream.category}
+        <strong>{dream.title}</strong> 
+        <hr></hr>
+        <p><i>{dream.category}</i></p>
       </ModalHeader>
 
       <ModalBody>

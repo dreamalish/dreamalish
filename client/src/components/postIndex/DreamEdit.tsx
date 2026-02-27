@@ -77,7 +77,7 @@ export default class DreamEdit extends React.Component<
                     </Button>
 
                     <Form onSubmit={this.updateDream}>
-                        <h5>Update Dream</h5>
+                        Update Dream
 
                         <FormGroup>
                             <Label>Title:</Label>

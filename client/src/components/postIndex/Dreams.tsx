@@ -8,6 +8,8 @@ import CreateDreamModal from './CreateDreamModal';
 import './Dream.css';
 import { UserContext } from '../../contexts/UserContext';
 import AvatarImage from "../common/AvatarImage";
+import APIURL from '../../helper/Environment';
+import defaultProfilePic from '../../assets/defaultProfilePic.jpg';
 
 type Props = {
   user: any | null;
@@ -45,6 +47,7 @@ export default function Dreams() {
     const fetchDreams = async () => {
       try {
         const res = await authFetch('/api/dreams');
+        
         console.log("Dreams response:", res);
         if (Array.isArray(res)) {
           setDreams(res);
@@ -111,8 +114,11 @@ export default function Dreams() {
         {dreams.map(dream => {
           const poster = dream.User;
           const username = poster?.username || 'Anonymous';
-          const profilePic =
-            poster?.profilePic || '/assets/defaultProfilePic.jpg';
+            const profilePic = poster?.profilePic
+            ? poster.profilePic.startsWith('http')
+            ? poster.profilePic
+            : `${APIURL}${poster.profilePic}` // ensure absolute URL
+            : defaultProfilePic;
             const openDream = async (dream: DreamType) => {
               setSelectedDream(dream);
             
