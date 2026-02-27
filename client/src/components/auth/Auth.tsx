@@ -1,10 +1,12 @@
 import React, { Component, FormEvent } from 'react';
 import { Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import { authFetch } from '../../helper/APIHelper';
-import logo from '../../assets/image.jpg'; // your logo
+import logo from '../../assets/image.jpg'; 
+import defaultProfilePic from '../../assets/defaultProfilePic.jpg'; // default avatar
 
 type Props = {
     updateToken: (newToken: string) => void;
+    updateUser: (user: any) => void; // add a prop to update global user state
 };
 
 type State = {
@@ -12,7 +14,6 @@ type State = {
     username: string;
     email: string;
     password: string;
-    profilePic: string;
     nsfwOk: boolean;
     error: string;
 };
@@ -25,7 +26,6 @@ export default class Auth extends Component<Props, State> {
             username: '',
             email: '',
             password: '',
-            profilePic: '',
             nsfwOk: false,
             error: ''
         };
@@ -40,22 +40,33 @@ export default class Auth extends Component<Props, State> {
 
     handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        const { isLogin, username, email, password, profilePic, nsfwOk } = this.state;
+        const { isLogin, username, email, password, nsfwOk } = this.state;
 
         try {
-            let url = isLogin ? '/api/users/login' : '/api/users/create';
-            let body = isLogin
+            const url = isLogin ? '/api/users/login' : '/api/users/create';
+
+            const body = isLogin
                 ? { username, password }
-                : { username, email, password, profilePic, nsfwOk };
+                : { 
+                    username, 
+                    email, 
+                    password, 
+                    profilePic: defaultProfilePic, // assign default automatically
+                    nsfwOk 
+                  };
 
             const data = await authFetch(url, {
                 method: 'POST',
                 body: JSON.stringify(body)
             });
 
-            if (data.sessionToken) {
+            if (data.sessionToken && data.user) {
+                // store token
                 localStorage.setItem('token', data.sessionToken);
                 this.props.updateToken(data.sessionToken);
+
+                // update user immediately (for SiteNav)
+                this.props.updateUser(data.user);
             } else {
                 this.setState({ error: isLogin ? 'Login failed.' : 'Signup failed.' });
             }
@@ -66,12 +77,11 @@ export default class Auth extends Component<Props, State> {
     };
 
     render() {
-        const { isLogin, username, email, password, profilePic, nsfwOk, error } = this.state;
+        const { isLogin, username, email, password, nsfwOk, error } = this.state;
 
         return (
             <div className="auth-wrapper">
                 <div className="auth-box">
-                    
                     <img src={logo} alt="Dreamalish Logo" className="auth-logo" />
 
                     <h3>{isLogin ? 'Login' : 'Sign Up'}</h3>
@@ -96,15 +106,6 @@ export default class Auth extends Component<Props, State> {
                                     />
                                 </FormGroup>
 
-                                <FormGroup>
-                                    <Label>Profile Picture URL</Label>
-                                    <Input
-                                        value={profilePic}
-                                        onChange={e => this.setState({ profilePic: e.target.value })}
-                                        placeholder="optional"
-                                    />
-                                </FormGroup>
-
                                 <FormGroup check>
                                     <Label check>
                                         <Input
@@ -123,7 +124,7 @@ export default class Auth extends Component<Props, State> {
                                 <Label>Username</Label>
                                 <Input
                                     value={username}
-                                    onChange={(e) => this.setState({ username: e.target.value })}
+                                    onChange={e => this.setState({ username: e.target.value })}
                                 />
                             </FormGroup>
                         )}
@@ -133,7 +134,7 @@ export default class Auth extends Component<Props, State> {
                             <Input
                                 type="password"
                                 value={password}
-                                onChange={(e) => this.setState({ password: e.target.value })}
+                                onChange={e => this.setState({ password: e.target.value })}
                             />
                         </FormGroup>
 

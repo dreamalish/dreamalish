@@ -7,6 +7,7 @@ const { userModel } = require('../db-associations');
 router.post('/login', async (req, res) => {
   try {
     const user = await userModel.findOne({ where: { username: req.body.username } });
+    console.log('Signup request body:', req.body);
 
     if (!user) return res.status(401).json({ error: "Invalid username" });
 
@@ -21,7 +22,7 @@ router.post('/login', async (req, res) => {
         id: user.id,
         username: user.username,
         email: user.email,
-        profilePic: user.profilePic   // 👈 ADD THIS
+        profilePic: 
       },
       token
     });
@@ -36,6 +37,7 @@ router.post('/create', async (req, res) => {
   try {
     const { username, password, email } = req.body;
     const existingUser = await userModel.findOne({ where: { username } });
+    console.log('Signup request body:', req.body);
     if (existingUser) return res.status(400).json({ error: "Username already exists" });
 
     const hash = await bcrypt.hash(password, 10);

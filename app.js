@@ -6,16 +6,33 @@ const path = require('path');
 dotenv.config();
 const { sequelize } = require('./db-associations');
 
+if (!process.env.JWT_SECRET) {
+  console.error("FATAL ERROR: JWT_SECRET is not defined.");
+  process.exit(1);
+}
+
 const userController = require('./controllers/userController');
 const dreamController = require('./controllers/dreamController');
 const commentController = require('./controllers/commentController');
 const profileController = require('./controllers/profileController');
 const privateProfileRoutes = require("./routes/privateProfileRoutes");
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production'
+    ? 'https://dreamalish-onrender.com' // replace with Render URL
+    : 'http://localhost:3000',
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
 
+app.use(cors(corsOptions));       // ✅ global CORS
+app.options('*', cors(corsOptions)); // ✅ global preflight
+
+
+// ==============================
+// BODY PARSING
+// ==============================
 app.use(express.json());
-app.use(cors({
-  origin: process.env.CLIENT_URL
-}));
 
 // Serve uploaded files (profile pics)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -65,7 +82,7 @@ if (process.env.NODE_ENV === 'production') {
 sequelize.authenticate()
   .then(() => {
     console.log('Connected to Postgres database');
-    return sequelize.sync({force:true});
+    return sequelize.sync();
   })
   .then(() => {
     console.log('DB synced');

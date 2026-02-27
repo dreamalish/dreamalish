@@ -12,12 +12,14 @@ import { UserProvider } from './contexts/UserContext';
 type State = {
   token: string;
   userId: number | null;
+  user: any | null;
 };
 
 export default class App extends React.Component<{}, State> {
   state: State = {
     token: localStorage.getItem('token') || '',
     userId: null,
+    user: null
   };
 
   componentDidMount() {
@@ -29,6 +31,10 @@ export default class App extends React.Component<{}, State> {
     this.setState({ token: newToken }, this.decodeUser);
   };
 
+  updateUser = (user: any) => {
+    this.setState({ user, userId: user.id });
+  };
+  
   logout = () => {
     localStorage.removeItem('token');
     this.setState({ token: '', userId: null });
@@ -55,7 +61,8 @@ export default class App extends React.Component<{}, State> {
 
         {!token ? (
           <>
-            <Auth updateToken={this.updateToken} />
+            <Auth updateToken={this.updateToken} 
+            updateUser={this.updateUser}/>
             <hr />
           </>
         ) : (
