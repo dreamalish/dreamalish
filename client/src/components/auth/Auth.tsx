@@ -16,6 +16,7 @@ type State = {
     password: string;
     nsfwOk: boolean;
     error: string;
+    isSubmitting: boolean;
 };
 
 export default class Auth extends Component<Props, State> {
@@ -31,7 +32,8 @@ export default class Auth extends Component<Props, State> {
             email: '',
             password: '',
             nsfwOk: false,
-            error: ''
+            error: '',
+            isSubmitting: false
         };
     }
 
@@ -42,9 +44,11 @@ export default class Auth extends Component<Props, State> {
         }));
     };
 
-    handleSubmit = async (e: FormEvent) => {
+    handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const { isLogin, username, email, password, nsfwOk } = this.state;
+        if (this.state.isSubmitting) return;
+        this.setState({ isSubmitting: true });
 
         try {
             const url = isLogin ? '/api/users/login' : '/api/users/create';
@@ -80,11 +84,11 @@ export default class Auth extends Component<Props, State> {
                 ...profile,
                 profilePic: profile.profilePic || defaultProfilePic
             });
-
+        this.setState({ isSubmitting: false });
         } catch (err) {
             console.error('Auth error', err);
             this.setState({ error: 'Request failed.' });
-        }
+        } finally {this.setState({isSubmitting: false})}
     };
 
     render() {
@@ -149,7 +153,7 @@ export default class Auth extends Component<Props, State> {
                             />
                         </FormGroup>
 
-                        <Button type="submit" color="primary" block>
+                        <Button type="submit" color="primary" block disabled={this.state.isSubmitting}>
                             {isLogin ? 'Login' : 'Sign Up'}
                         </Button>
                     </Form>

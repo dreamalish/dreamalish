@@ -36,7 +36,7 @@ export default function PublicProfile() {
     <div style={{ maxWidth: '500px', margin: '2rem auto' }}>
 
 <AvatarImage
-  src={user?.profilePic}
+  src={avatarUrl}
   alt={user?.username}
   size={100}
   className="profile-avatar"

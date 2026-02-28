@@ -159,7 +159,7 @@ export default function Dreams() {
                     className="dream-username"
                   >
                     <AvatarImage
-                      src={dream.User?.profilePic}
+                      src={profilePic}
                       alt={dream.User?.username}
                       size={24}
                       className="rounded-circle me-2"
