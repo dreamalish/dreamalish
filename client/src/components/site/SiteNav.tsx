@@ -1,7 +1,7 @@
 // SiteNav.tsx
 import React, { useContext } from 'react';
 import { Navbar, Nav, NavItem, Container } from 'reactstrap';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import SearchUsers from '../SearchUsers';
 import AvatarImage from '../common/AvatarImage';
 import { UserContext } from '../../contexts/UserContext';
@@ -9,6 +9,7 @@ import defaultProfilePic from '../../assets/defaultProfilePic.jpg';
 
 export default function SiteNav({ logout }: { logout: () => void }) {
   const { currentUser } = useContext(UserContext);
+  const navigate = useNavigate();
 
   console.log("Navbar currentUser profilePic:", currentUser?.profilePic);
 
@@ -49,7 +50,10 @@ export default function SiteNav({ logout }: { logout: () => void }) {
             <span
               className="nav-link"
               style={{ cursor: 'pointer' }}
-              onClick={logout}
+              onClick={()=>{
+                logout();
+                navigate("/");
+              }}
             >
               Logout
             </span>

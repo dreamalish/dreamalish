@@ -6,6 +6,7 @@ import SiteNav from './components/site/SiteNav';
 import PublicProfile from './components/postIndex/PublicProfile';
 import './App.css';
 import Dreams from './components/postIndex/Dreams';
+import LoggedOut from "./components/LoggedOut";
 
 type State = {
   token: string;
@@ -23,7 +24,10 @@ export default class App extends React.Component<{}, State> {
 
   logout = () => {
     localStorage.removeItem('token');
-    this.setState({ token: '' });
+  
+    this.setState({
+      token: ''
+    });
   };
 
   render() {
@@ -47,6 +51,7 @@ export default class App extends React.Component<{}, State> {
               <Route path="/profile" element={<Profile />} />
               <Route path="/u/:username" element={<PublicProfile />} />
               <Route path="*" element={<Navigate to="/" />} />
+              <Route path="/logged-out" element={<LoggedOut />} />
             </Routes>
           </>
         )}
