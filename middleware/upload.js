@@ -1,4 +1,4 @@
-const multer = require('multer');
+/*const multer = require('multer');
 const path = require('path');
 
 const storage = multer.diskStorage({
@@ -18,3 +18,20 @@ const fileFilter = (req, file, cb) => {
 };
 
 module.exports = multer({ storage, fileFilter });
+*/
+const multer = require('multer');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinary = require('../config/cloudinary');
+
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'avatars',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'gif'],
+    transformation: [
+      { width: 400, height: 400, crop: 'fill', gravity: 'face' }
+    ]
+  },
+});
+
+module.exports = multer({ storage });

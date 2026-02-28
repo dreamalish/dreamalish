@@ -19,7 +19,7 @@ router.put('/update', validateSession, async (req, res) => {
       updates,
       { where: { id: req.user.id } }
     );
-
+    console.log(req.user.profilePic);
     console.log("Rows updated:", updated);
 
     res.json({ message: 'Profile updated' });
@@ -33,7 +33,7 @@ router.put('/update', validateSession, async (req, res) => {
 /* ===========================
    UPLOAD AVATAR
 =========================== */
-router.post('/avatar', validateSession, upload.single('avatar'), async (req, res) => {
+/* router.post('/avatar', validateSession, upload.single('avatar'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
 
@@ -48,7 +48,38 @@ router.post('/avatar', validateSession, upload.single('avatar'), async (req, res
     res.status(500).json({ error: err.message });
   }
 });
+*/
+router.post(
+  '/avatar',
+  validateSession,
+  upload.single('avatar'),
+  async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: 'No file uploaded' });
+      }
 
+      // Cloudinary gives full permanent URL
+      const imageUrl = req.file.path;
+
+      await userModel.update(
+        { profilePic: imageUrl },
+        { where: { id: req.user.id } }
+      );
+
+      console.log("Cloudinary URL:", imageUrl);
+
+      res.json({
+        message: 'Avatar updated',
+        profilePic: imageUrl
+      });
+
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: err.message });
+    }
+  }
+);
 /* ===========================
    USER SEARCH (PARTIAL MATCH)
 =========================== */

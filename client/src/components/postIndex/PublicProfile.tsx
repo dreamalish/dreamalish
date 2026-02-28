@@ -29,7 +29,7 @@ export default function PublicProfile() {
   if (!user) return <p>User not found.</p>;
 
   const avatarUrl = user.profilePic
-    ? `${process.env.REACT_APP_API_URL}${user.profilePic}`
+    ? user.profilePic
     : '/assets/defaultProfilePic.jpg';
 
   return (

@@ -67,6 +67,7 @@ export default function Dreams() {
   // ===============================
   useEffect(() => {
     if (!currentUser?.profilePic) return;
+    console.log("currentUser?.profilePic:", currentUser?.profilePic);
     const updatedProfilePic = `${currentUser.profilePic}?t=${new Date().getTime()}`;
 
     setDreams(prev =>
