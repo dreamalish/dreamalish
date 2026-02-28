@@ -4,6 +4,7 @@ import { authFetch } from '../../helper/APIHelper';
 import { UserContext } from '../../contexts/UserContext';
 import logo from '../../assets/image.jpg';
 import defaultProfilePic from '../../assets/defaultProfilePic.jpg';
+import { useNavigate } from "react-router-dom";
 
 type Props = {
     updateToken: (newToken: string) => void;
@@ -19,12 +20,12 @@ type State = {
     isSubmitting: boolean;
 };
 
-export default class Auth extends Component<Props, State> {
+class Auth extends Component<Props & { navigate: (path: string) => void }, State> {
     static contextType = UserContext;
     context!: React.ContextType<typeof UserContext>;
 
 
-    constructor(props: Props) {
+    constructor(props: Props & { navigate: (path: string) => void }){
         super(props);
         this.state = {
             isLogin: true,
@@ -46,9 +47,9 @@ export default class Auth extends Component<Props, State> {
 
     handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const { isLogin, username, email, password, nsfwOk } = this.state;
         if (this.state.isSubmitting) return;
         this.setState({ isSubmitting: true });
+        const { isLogin, username, email, password, nsfwOk } = this.state;
 
         try {
             const url = isLogin ? '/api/users/login' : '/api/users/create';
@@ -76,7 +77,7 @@ export default class Auth extends Component<Props, State> {
             // Store token
             localStorage.setItem('token', data.sessionToken);
             this.props.updateToken(data.sessionToken);
-
+            this.props.navigate("/home");
             // 🔥 Immediately fetch profile and update context
             const profile = await authFetch('/api/profile/me');
 
@@ -84,7 +85,6 @@ export default class Auth extends Component<Props, State> {
                 ...profile,
                 profilePic: profile.profilePic || defaultProfilePic
             });
-        this.setState({ isSubmitting: false });
         } catch (err) {
             console.error('Auth error', err);
             this.setState({ error: 'Request failed.' });
@@ -154,7 +154,12 @@ export default class Auth extends Component<Props, State> {
                         </FormGroup>
 
                         <Button type="submit" color="primary" block disabled={this.state.isSubmitting}>
-                            {isLogin ? 'Login' : 'Sign Up'}
+                        {this.state.isSubmitting
+                        ? "Processing..."
+                        : isLogin
+                        ? "Login"
+                        : "Sign Up"
+                        }
                         </Button>
                     </Form>
 
@@ -168,3 +173,12 @@ export default class Auth extends Component<Props, State> {
         );
     }
 }
+
+function withRouter(Component: any) {
+    return function ComponentWithRouterProp(props: any) {
+        const navigate = useNavigate();
+        return <Component {...props} navigate={navigate} />;
+    };
+}
+
+export default withRouter(Auth);

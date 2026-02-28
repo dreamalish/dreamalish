@@ -54,7 +54,7 @@ router.post('/create', async (req, res) => {
     const host = req.protocol + '://' + req.get('host'); // e.g., https://dreamalish.onrender.com
 
     const userResponse = {
-    ...newUser.toObject(),
+    ...newUser,
     profilePic: newUser.profilePic.startsWith('/uploads/')
     ? host + newUser.profilePic
     : newUser.profilePic
