@@ -46,13 +46,20 @@ export default function Profile() {
         setLocation(data.location || '');
 
         if (data.profilePic) {
-          const avatarURL = `${APIURL}${data.profilePic}`;
+          const avatarURL = data.profilePic;
           setCurrentAvatar(avatarURL);
 
           // 🔥 Update global context immediately
           setCurrentUser((prev: import('../../contexts/UserContext').User | null) =>
             prev ? { ...prev, profilePic: avatarURL } : prev
           );
+          // 🔥 update localStorage if you store user there
+          const storedUser = localStorage.getItem("user");
+          if (storedUser) {
+            const parsed = JSON.parse(storedUser);
+            parsed.profilePic = avatarURL;
+            localStorage.setItem("user", JSON.stringify(parsed));
+          }
         }
       } catch (err) {
         console.error(err);
@@ -117,7 +124,7 @@ export default function Profile() {
       setCurrentUser(prev =>
         prev ? { ...prev, email, bio, location } : prev
       );
-  
+      
       setMessage("Profile updated successfully!");
       setIsEditing(false);
   

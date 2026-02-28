@@ -3,6 +3,7 @@ const upload = require('../middleware/upload');
 const validateSession = require('../middleware/validate-session');
 const { userModel } = require('../db-associations');
 const { Op } = require("sequelize");
+const cloudinary = require('../config/cloudinary');
 
 /* ===========================
    UPDATE PROFILE
@@ -59,7 +60,48 @@ router.post(
         return res.status(400).json({ error: 'No file uploaded' });
       }
 
-      // Cloudinary gives full permanent URL
+      // ✅ Cloudinary returns full hosted URL here
+      const avatarUrl = req.file.path;
+
+      console.log("Cloudinary file:", req.file);
+      console.log("Cloudinary URL:", avatarUrl);
+
+      await userModel.update(
+        { profilePic: avatarUrl },
+        { where: { id: req.user.id } }
+      );
+
+      res.json({
+        message: 'Avatar updated',
+        profilePic: avatarUrl,
+        user: updatedUser
+      });
+
+    } catch (err) {
+      console.error("Avatar upload error:", err);
+      res.status(500).json({ error: err.message });
+    }
+  }
+);
+
+/*
+      // =========================
+      // DELETE OLD AVATAR
+      // =========================
+      if (user.profilePic && user.profilePic.includes('cloudinary')) {
+
+        const parts = user.profilePic.split('/');
+        const fileName = parts[parts.length - 1];
+        const publicId = `avatars/${fileName.split('.')[0]}`;
+
+        await cloudinary.uploader.destroy(publicId);
+
+        console.log("Deleted old avatar:", publicId);
+      }
+
+      // =========================
+      // SAVE NEW AVATAR
+      // =========================
       const imageUrl = req.file.path;
 
       await userModel.update(
@@ -67,10 +109,7 @@ router.post(
         { where: { id: req.user.id } }
       );
 
-      console.log("Cloudinary URL:", imageUrl);
-
       res.json({
-        message: 'Avatar updated',
         profilePic: imageUrl
       });
 
@@ -80,6 +119,7 @@ router.post(
     }
   }
 );
+*/
 /* ===========================
    USER SEARCH (PARTIAL MATCH)
 =========================== */
