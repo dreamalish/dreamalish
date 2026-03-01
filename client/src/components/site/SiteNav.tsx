@@ -5,7 +5,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import SearchUsers from '../SearchUsers';
 import AvatarImage from '../common/AvatarImage';
 import { UserContext } from '../../contexts/UserContext';
-import defaultProfilePic from '../../assets/defaultProfilePic.jpg';
 
 export default function SiteNav({ logout }: { logout: () => void }) {
   const { currentUser } = useContext(UserContext);

@@ -34,48 +34,41 @@ router.put('/update', validateSession, async (req, res) => {
 /* ===========================
    UPLOAD AVATAR
 =========================== */
-/* router.post('/avatar', validateSession, upload.single('avatar'), async (req, res) => {
-  try {
-    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-
-    await userModel.update(
-      { profilePic: `/uploads/${req.file.filename}` },
-      { where: { id: req.user.id } }
-    );
-    console.log("Saved file:", req.file);
-    console.log("File path:", `/uploads/${req.file.filename}`);
-    res.json({ message: 'Avatar updated', file: req.file.filename });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-*/
 router.post(
   '/avatar',
   validateSession,
   upload.single('avatar'),
   async (req, res) => {
     try {
+      console.log("Cloudinary file:", req.file);
+
       if (!req.file) {
-        return res.status(400).json({ error: 'No file uploaded' });
+        return res.status(400).json({ error: "No file uploaded" });
       }
 
-      // ✅ Cloudinary returns full hosted URL here
-      const avatarUrl = req.file.path;
+      const cloudinaryUrl = req.file.path;
 
-      console.log("Cloudinary file:", req.file);
-      console.log("Cloudinary URL:", avatarUrl);
+      console.log("Cloudinary URL:", cloudinaryUrl);
 
+      // Save URL to database
       await userModel.update(
-        { profilePic: avatarUrl },
+        { profilePic: cloudinaryUrl },
         { where: { id: req.user.id } }
       );
 
-      res.json({
-        message: 'Avatar updated',
-        profilePic: avatarUrl,
-        user: updatedUser
+      // Fetch updated user
+      const updatedUser = await userModel.findByPk(req.user.id, {
+        attributes: [
+          "id",
+          "username",
+          "profilePic",
+          "email",
+          "bio",
+          "location",
+        ],
       });
+
+      res.json(updatedUser);
 
     } catch (err) {
       console.error("Avatar upload error:", err);
@@ -84,45 +77,6 @@ router.post(
   }
 );
 
-/*
-      // =========================
-      // DELETE OLD AVATAR
-      // =========================
-      if (user.profilePic && user.profilePic.includes('cloudinary')) {
-
-        const parts = user.profilePic.split('/');
-        const fileName = parts[parts.length - 1];
-        const publicId = `avatars/${fileName.split('.')[0]}`;
-
-        await cloudinary.uploader.destroy(publicId);
-
-        console.log("Deleted old avatar:", publicId);
-      }
-
-      // =========================
-      // SAVE NEW AVATAR
-      // =========================
-      const imageUrl = req.file.path;
-
-      await userModel.update(
-        { profilePic: imageUrl },
-        { where: { id: req.user.id } }
-      );
-
-      res.json({
-        profilePic: imageUrl
-      });
-
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: err.message });
-    }
-  }
-);
-*/
-/* ===========================
-   USER SEARCH (PARTIAL MATCH)
-=========================== */
 router.get('/search/:query', async (req, res) => {
   try {
     const users = await userModel.findAll({

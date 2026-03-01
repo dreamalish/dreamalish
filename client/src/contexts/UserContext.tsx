@@ -29,6 +29,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const loadUser = async () => {
       try {
         const user = await authFetch('/api/profile/me');
+        console.log("UserContext loaded user:", user);
         setCurrentUser(user);
       } catch (err) {
         setCurrentUser(null);

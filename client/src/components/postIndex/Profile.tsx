@@ -12,9 +12,10 @@ import {
 } from 'reactstrap';
 import { authFetch } from '../../helper/APIHelper';
 import APIURL from '../../helper/Environment';
-import { UserContext, User } from '../../contexts/UserContext';
+import { User, UserContext } from '../../contexts/UserContext';
 import AvatarImage from "../common/AvatarImage";
 import './Profile.css';
+
 
 
 export default function Profile() {
@@ -48,7 +49,7 @@ export default function Profile() {
         if (data.profilePic) {
           const avatarURL = data.profilePic;
           setCurrentAvatar(avatarURL);
-
+          
           // 🔥 Update global context immediately
           setCurrentUser((prev: import('../../contexts/UserContext').User | null) =>
             prev ? { ...prev, profilePic: avatarURL } : prev
@@ -102,14 +103,8 @@ export default function Profile() {
           body: formData,
         });
   
-        if (avatarRes?.file) {
-          const uploadedPath = `/uploads/${avatarRes.file}`;
-  
-          setCurrentAvatar(uploadedPath);
-  
-          setCurrentUser(prev =>
-            prev ? { ...prev, profilePic: uploadedPath } : prev
-          );
+        if (avatarRes?.profilePic) {
+          setCurrentUser(avatarRes);
         }
   
         setProfilePic(null);
@@ -146,7 +141,7 @@ export default function Profile() {
       <h2>My Profile</h2>
 
       <AvatarImage
-  src={currentAvatar}
+  src={currentUser?.profilePic}
   alt="avatar"
   size={120}
   className="profile-avatar"
