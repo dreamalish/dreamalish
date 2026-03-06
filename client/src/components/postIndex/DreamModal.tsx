@@ -9,6 +9,8 @@ type Props = {
   onClose: () => void;
   onCommentAdded?: (dreamId: number, newComment: any) => void;
   onToggleLike?: (dreamId: number) => void;
+  onDreamUpdated?: (dream: DreamType) => void;
+  onDreamDeleted?: (dreamId: number) => void;
 };
 
 const DreamModal: React.FC<Props> = ({
@@ -17,7 +19,7 @@ const DreamModal: React.FC<Props> = ({
   onCommentAdded,
   onToggleLike,
 }) => {
-
+  
   if (!dream) return null;
 
   return (

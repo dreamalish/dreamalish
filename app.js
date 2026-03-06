@@ -15,10 +15,11 @@ const userController = require('./controllers/userController');
 const dreamController = require('./controllers/dreamController');
 const commentController = require('./controllers/commentController');
 const profileController = require('./controllers/profileController');
+const notificationsController = require('./controllers/notificationsController');
 const privateProfileRoutes = require("./routes/privateProfileRoutes");
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production'
-    ? 'https://dreamalish.onrender.com' // replace with Render URL
+    ? 'https://dreamalish.onrender.com' 
     : 'http://localhost:3000',
   methods: ['GET','POST','PUT','DELETE','OPTIONS'],
   credentials: true,
@@ -56,6 +57,8 @@ app.use('/api/dreams', require('./middleware/validate-session'), dreamController
 app.use('/api/comments', require('./middleware/validate-session'), commentController);
 app.use('/api/profile', require('./middleware/validate-session'), profileController);
 app.use("/private-profile", privateProfileRoutes);
+app.use('/api/notifications',
+  require('./middleware/validate-session'), notificationsController);
 
 
 /* =======================================================

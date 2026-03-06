@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Card, Button } from 'reactstrap';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { DreamType } from '../../types/CustomTypes';
 import { authFetch } from '../../helper/APIHelper';
 import DreamModal from './DreamModal';
@@ -15,6 +15,10 @@ type Props = {
   user: any | null;
 };
 
+type LocationState = {
+  openDreamId?: number;
+};
+
 export default function Dreams() {
   const { currentUser } = useContext(UserContext)!;
 
@@ -22,6 +26,25 @@ export default function Dreams() {
   const [selectedDream, setSelectedDream] = useState<DreamType | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+  const location = useLocation() as {
+    state?: LocationState;
+  };
+
+  const handleDreamUpdated = (updatedDream: DreamType) => {
+    setDreams(prev =>
+      prev.map(d =>
+        d.id === updatedDream.id ? updatedDream : d
+      )
+    );
+    setSelectedDream(updatedDream);
+  };
+  
+  const handleDreamDeleted = (DreamId: number) => {
+    setDreams(prev =>
+      prev.filter(d => d.id !== DreamId)
+    );
+    setSelectedDream(null);
+  };
 
   // ===============================
   // Fetch Dreams
@@ -61,6 +84,23 @@ export default function Dreams() {
     fetchDreams();
   }, []);
   
+  // ===============================
+// Open DreamModal if navigated from notification
+// ===============================
+useEffect(() => {
+
+  const openDreamId = location.state?.openDreamId;
+  if (!openDreamId || dreams.length === 0) return;
+
+  const dreamToOpen = dreams.find(d => d.id === openDreamId);
+  if (!dreamToOpen) return;
+
+  setSelectedDream(dreamToOpen);
+
+  // Clear state so it doesn't reopen
+  window.history.replaceState({}, document.title);
+
+}, [location.state, dreams]);
 
   // ===============================
   // Update poster avatar immediately if currentUser changed avatar
@@ -190,6 +230,8 @@ export default function Dreams() {
         <DreamModal
           dream={selectedDream}
           onClose={() => setSelectedDream(null)}
+          onDreamUpdated={handleDreamUpdated}
+          onDreamDeleted={handleDreamDeleted}
           onCommentAdded={(dreamId: number, newComment: any) => {
             setDreams(prev =>
               prev.map(d =>
@@ -229,6 +271,7 @@ export default function Dreams() {
           onClose={() => setShowCreateModal(false)}
           onDreamCreated={newDream => {
             setDreams(prev => [newDream, ...prev]);
+            setSelectedDream(newDream);
           }}
         />
       )}

@@ -1,7 +1,7 @@
 // src/controllers/dreamController.js
 const express = require('express');
 const router = express.Router();
-const { dreamModel, userModel, commentModel, sequelize } = require('../db-associations');
+const { dreamModel, userModel, commentModel, notificationsModel, sequelize } = require('../db-associations');
 const Like = sequelize.models.Like;
 const { Sequelize } = require('sequelize');
 const validateSession = require('../middleware/validate-session');
@@ -59,62 +59,6 @@ router.post('/create', validateSession, async (req, res) => {
   }
 });
 
-// ---------- GET ALL DREAMS ----------
-/* router.get('/', validateSession, async (req, res) => {
-  try {
-    const userId = req.user.id;
-
-    const dreams = await dreamModel.findAll({
-      order: [['createdAt', 'DESC']],
-      include: [
-        {
-          model: userModel,
-          attributes: ['id', 'username', 'profilePic'],
-          required: true, // Always include User
-        },
-        {
-          model: commentModel,
-          include: [
-            {
-              model: userModel,
-              attributes: ['id', 'username', 'profilePic'],
-            },
-          ],
-        },
-        {
-          model: Like,
-          attributes: ['id', 'userId'],
-        },
-      ],
-    });
-
-    // Filter private dreams
-    const filtered = dreams.filter(dream => {
-      const ownerId = dream.UserId;
-
-      if (!dream.isPrivate) return true;       // public
-      if (ownerId === userId) return true;     // own
-
-      return false; // For now, skip followers until you implement SocialEdge properly
-    });
-
-    // Format for frontend
-    const formatted = filtered.map(dream => {
-      const d = dream.toJSON();
-      return {
-        ...d,
-        likes: d.Likes?.length || 0,
-        liked: d.Likes?.some(like => like.userId === userId) || false,
-      };
-    });
-
-    res.status(200).json(formatted);
-  } catch (err) {
-    console.error('Error fetching dreams:', err);
-    res.status(500).json({ error: 'Failed to fetch dreams', details: err.message });
-  }
-});
-*/
 // GET ALL DREAMS
 router.get('/', validateSession, async (req, res) => {
   try {
@@ -152,6 +96,7 @@ router.get('/', validateSession, async (req, res) => {
         ...dreamJSON,
         likes: dreamJSON.Likes?.length || 0,
         liked: dreamJSON.Likes?.some(like => like.userId === userId) || false,
+        isOwner: dreamJSON.UserId === userId
       };
     });
 
@@ -204,23 +149,134 @@ router.put('/:id/views', async (req, res) => {
 });
 
 // ---------- LIKE / UNLIKE ----------
+// ---------- LIKE / UNLIKE ----------
 router.post('/:id/like', validateSession, async (req, res) => {
   try {
+
     const userId = req.user.id;
     const dreamId = req.params.id;
 
-    const existingLike = await Like.findOne({ where: { userId, dreamId } });
+    const existingLike = await Like.findOne({
+      where: { userId, dreamId }
+    });
 
+    // ===============================
+    // UNLIKE
+    // ===============================
     if (existingLike) {
       await existingLike.destroy();
       return res.json({ liked: false });
-    } else {
-      await Like.create({ userId, dreamId });
-      return res.json({ liked: true });
     }
+
+    // ===============================
+    // LIKE
+    // ===============================
+    await Like.create({ userId, dreamId });
+
+    // Find dream owner
+    const dream = await dreamModel.findByPk(dreamId);
+
+    if (!dream) {
+      return res.status(404).json({ error: "Dream not found" });
+    }
+
+    // Prevent self-notifications
+    if (dream.UserId !== userId) {
+
+      await notificationsModel.create({
+        type: 'like',
+        message: `${req.user.username} liked your dream`,
+        userId: dream.UserId,   // recipient
+        actorId: userId,        // liker
+        dreamId: dream.id
+      });
+
+    }
+
+    return res.json({ liked: true });
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Like failed' });
+  }
+});
+
+//Edit Dream
+// ---------- EDIT DREAM ----------
+router.put('/:id', validateSession, async (req, res) => {
+  try {
+    const dream = await dreamModel.findOne({
+      where: {
+        id: req.params.id,
+        UserId: req.user.id   // ✅ must match capital U
+      }
+    });
+
+    if (!dream) {
+      return res.status(404).json({ error: "Dream not found" });
+    }
+
+    await dream.update({
+      title: req.body.title,
+      content: req.body.content,
+      category: req.body.category
+    });
+
+    // Return fully formatted version like GET route
+    const updatedDream = await dreamModel.findByPk(dream.id, {
+      include: [
+        {
+          model: userModel,
+          as: 'User',
+          attributes: ['id', 'username', 'profilePic']
+        },
+        {
+          model: commentModel,
+          include: [{
+            model: userModel,
+            as: 'User',
+            attributes: ['id', 'username', 'profilePic']
+          }]
+        },
+        {
+          model: Like,
+          attributes: ['id', 'userId']
+        }
+      ]
+    });
+
+    const json = updatedDream.toJSON();
+    json.likes = json.Likes?.length || 0;
+    json.liked = json.Likes?.some(l => l.userId === req.user.id) || false;
+    
+
+    res.json(json);
+
+  } catch (err) {
+    console.error("Update dream error:", err);
+    res.status(500).json({ error: "Failed to update dream" });
+  }
+});
+
+// ---------- DELETE DREAM ----------
+router.delete('/:id', validateSession, async (req, res) => {
+  try {
+    const deleted = await dreamModel.destroy({
+      where: {
+        id: req.params.id,
+        UserId: req.user.id   // ✅ must match model
+      }
+    });
+
+    if (!deleted) {
+      return res.status(404).json({ error: "Dream not found" });
+    }
+
+    res.json({ success: true });
+
+  } catch (err) {
+    console.error("Delete dream error:", err);
+    res.status(500).json({ error: "Failed to delete dream" });
   }
 });
 

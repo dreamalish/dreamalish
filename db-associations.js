@@ -23,7 +23,8 @@ const dreamModel = require('./models/dreamModel')(sequelize, DataTypes);
 const commentModel = require('./models/commentModel')(sequelize, DataTypes);
 const Like = require('./models/likeModel')(sequelize, DataTypes); // ← make sure this matches your file path
 const socialEdgeModel = require('./models/socialEdge')(sequelize, DataTypes);
-
+const notificationsModel =
+  require('./models/notificationsModel')(sequelize, DataTypes);
 
 // Dream relationships
 userModel.hasMany(dreamModel, {
@@ -73,7 +74,31 @@ userModel.belongsToMany(userModel, {
   otherKey: "requesterId"
 });
 
+//Notifications
+// recipient (who receives notification)
+notificationsModel.belongsTo(userModel, {
+  foreignKey: 'userId',
+  as: 'recipient'
+});
 
+userModel.hasMany(notificationsModel, {
+  foreignKey: 'userId',
+  as: 'notifications'
+});
+
+
+// actor (who performed the action)
+notificationsModel.belongsTo(userModel, {
+  foreignKey: 'actorId',
+  as: 'actor'
+});
+
+
+// related dream
+notificationsModel.belongsTo(dreamModel, {
+  foreignKey: 'dreamId',
+  as: 'dream'
+});
 
 module.exports = {
   sequelize,
@@ -81,5 +106,6 @@ module.exports = {
   dreamModel,
   commentModel,
   Like,
-  socialEdgeModel
+  socialEdgeModel,
+  notificationsModel
 };

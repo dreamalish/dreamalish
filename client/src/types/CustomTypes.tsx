@@ -18,7 +18,7 @@ export type DreamType = {
       
         isPrivate?: boolean;
         isNSFW?: boolean;
-      
+        
         userId?: number;
       
         views?: number;
