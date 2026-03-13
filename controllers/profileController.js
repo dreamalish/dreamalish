@@ -1,9 +1,10 @@
 const router = require('express').Router();
 const upload = require('../middleware/upload');
 const validateSession = require('../middleware/validate-session');
-const { userModel } = require('../db-associations');
+const { userModel, userStats } = require('../db-associations');
 const { Op } = require("sequelize");
 const cloudinary = require('../config/cloudinary');
+const calculateLevel = require('../helpers/levelCalculator');
 
 /* ===========================
    UPDATE PROFILE
@@ -170,6 +171,70 @@ router.get('/:username', async (req, res) => {
 
     res.json(user);
   } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/*levelCalculator route
+*/
+router.get('/stats', validateSession, async (req, res) => {
+
+  try {
+
+    const stats = await userStats.findOne({
+      where: { userId: req.user.id }
+    });
+
+    if (!stats) {
+      return res.status(404).json({ error: "Stats not found" });
+    }
+
+    const levelInfo = calculateLevel(stats.points);
+
+    res.json({
+      points: stats.points,
+      dreamCount: stats.dreamCount,
+      commentCount: stats.commentCount,
+      likesReceived: stats.likesReceived,
+      level: levelInfo.level,
+      title: levelInfo.title,
+      nextLevel: levelInfo.nextLevel
+    });
+
+  } catch (err) {
+    console.error("STATS ERROR:", err);
+    res.status(500).json({ error: err.message });
+  }
+
+});
+
+// ===============================
+// PUBLIC USER STATS
+// ===============================
+router.get('/stats/:userId', async (req, res) => {
+  try {
+
+    const { userId } = req.params;
+
+    const stats = await userStats.findOne({
+      where: { userId }
+    });
+
+    if (!stats) {
+      return res.status(404).json({ error: "Stats not found" });
+    }
+
+    const levelInfo = calculateLevel(stats.points);
+
+    res.json({
+      points: stats.points,
+      level: levelInfo.level,
+      title: levelInfo.title,
+      nextLevel: levelInfo.nextLevel
+    });
+
+  } catch (err) {
+    console.error("PUBLIC STATS ERROR:", err);
     res.status(500).json({ error: err.message });
   }
 });

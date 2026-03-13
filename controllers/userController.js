@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { userModel } = require('../db-associations');
+const { userModel, userStats } = require('../db-associations');
 
 /* LOGIN */
 router.post('/login', async (req, res) => {
@@ -47,6 +47,10 @@ router.post('/create', async (req, res) => {
       email,
       passwordhash: hash,
       profilePic:  req.body.profilePic || '/uploads/defaultProfilePic.jpg'
+    });
+    
+    await userStats.create({
+      userId: newUser.id
     });
 
     const token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET, { expiresIn: '1d' });

@@ -13,6 +13,7 @@ import {
 import { authFetch } from '../../helper/APIHelper';
 import APIURL from '../../helper/Environment';
 import { User, UserContext } from '../../contexts/UserContext';
+import LevelProgress from "../profile/LevelProgress";
 import AvatarImage from "../common/AvatarImage";
 import './Profile.css';
 
@@ -32,6 +33,7 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
+  const [stats, setStats] = useState<any>(null);
 
   // ===============================
   // Fetch Profile
@@ -40,21 +42,20 @@ export default function Profile() {
     const fetchProfile = async () => {
       try {
         const data = await authFetch('/api/profile/me');
-
+    
         setUsername(data.username || '');
         setEmail(data.email || '');
         setBio(data.bio || '');
         setLocation(data.location || '');
-
+    
         if (data.profilePic) {
           const avatarURL = data.profilePic;
           setCurrentAvatar(avatarURL);
           
-          // 🔥 Update global context immediately
           setCurrentUser((prev: import('../../contexts/UserContext').User | null) =>
             prev ? { ...prev, profilePic: avatarURL } : prev
           );
-          // 🔥 update localStorage if you store user there
+    
           const storedUser = localStorage.getItem("user");
           if (storedUser) {
             const parsed = JSON.parse(storedUser);
@@ -62,12 +63,22 @@ export default function Profile() {
             localStorage.setItem("user", JSON.stringify(parsed));
           }
         }
+    
+        // ⭐ Fetch gamification stats
+        try {
+          const statsData = await authFetch("/api/profile/stats");
+          setStats(statsData);
+        } catch (err) {
+          console.error("Failed to load stats:", err);
+        }
+    
       } catch (err) {
         console.error(err);
       } finally {
         setLoading(false);
       }
     };
+    
 
     fetchProfile();
   }, [setCurrentUser]);
@@ -141,12 +152,22 @@ export default function Profile() {
       <h2>My Profile</h2>
 
       <AvatarImage
-  src={currentUser?.profilePic}
-  alt="avatar"
-  size={120}
-  className="profile-avatar"
-/>
+        src={currentUser?.profilePic}
+        alt="avatar"
+        size={120}
+        className="profile-avatar"
+      />
 
+      {stats && (
+        <div style={{ marginTop: "10px",marginBottom: "20px" }}>
+        <LevelProgress
+          points={stats.points}
+          nextLevel={stats.nextLevel}
+          level={stats.level}
+          title={stats.title}
+        />
+        </div>
+      )}
 
       <div style={{ textAlign: 'left', marginBottom: '1rem' }}>
         <p><strong>Username:</strong> {username}</p>

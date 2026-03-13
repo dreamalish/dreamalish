@@ -1,7 +1,7 @@
 // src/controllers/dreamController.js
 const express = require('express');
 const router = express.Router();
-const { dreamModel, userModel, commentModel, notificationsModel, sequelize } = require('../db-associations');
+const { dreamModel, userModel, commentModel, notificationsModel, userStats, sequelize } = require('../db-associations');
 const Like = sequelize.models.Like;
 const { Sequelize } = require('sequelize');
 const validateSession = require('../middleware/validate-session');
@@ -23,7 +23,15 @@ router.post('/create', validateSession, async (req, res) => {
       isPrivate: isPrivate || false,
       UserId: req.user.id,
     });
-
+      await UserStats.increment(
+      {
+        points: 5,
+        dreamCount: 1
+      },
+      {
+        where: { userId: req.user.id }
+      }
+    );
     // Fetch the full dream with User, Comments, Likes
     const fullDream = await dreamModel.findByPk(newDream.id, {
       include: [
@@ -149,12 +157,17 @@ router.put('/:id/views', async (req, res) => {
 });
 
 // ---------- LIKE / UNLIKE ----------
-// ---------- LIKE / UNLIKE ----------
 router.post('/:id/like', validateSession, async (req, res) => {
   try {
 
     const userId = req.user.id;
     const dreamId = req.params.id;
+
+    const dream = await dreamModel.findByPk(dreamId);
+
+    if (!dream) {
+      return res.status(404).json({ error: "Dream not found" });
+    }
 
     const existingLike = await Like.findOne({
       where: { userId, dreamId }
@@ -164,8 +177,16 @@ router.post('/:id/like', validateSession, async (req, res) => {
     // UNLIKE
     // ===============================
     if (existingLike) {
+
       await existingLike.destroy();
+
+      await userStats.increment(
+        { points: -1 },
+        { where: { userId: dream.UserId } }
+      );
+
       return res.json({ liked: false });
+
     }
 
     // ===============================
@@ -173,12 +194,10 @@ router.post('/:id/like', validateSession, async (req, res) => {
     // ===============================
     await Like.create({ userId, dreamId });
 
-    // Find dream owner
-    const dream = await dreamModel.findByPk(dreamId);
-
-    if (!dream) {
-      return res.status(404).json({ error: "Dream not found" });
-    }
+    await UserStats.increment(
+      { points: 1 },
+      { where: { userId: dream.UserId } }
+    );
 
     // Prevent self-notifications
     if (dream.UserId !== userId) {
@@ -186,8 +205,8 @@ router.post('/:id/like', validateSession, async (req, res) => {
       await notificationsModel.create({
         type: 'like',
         message: `${req.user.username} liked your dream`,
-        userId: dream.UserId,   // recipient
-        actorId: userId,        // liker
+        userId: dream.UserId,
+        actorId: userId,
         dreamId: dream.id
       });
 
@@ -196,8 +215,8 @@ router.post('/:id/like', validateSession, async (req, res) => {
     return res.json({ liked: true });
 
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Like failed' });
+    console.error("LIKE ERROR:", err);
+    res.status(500).json({ error: err.message });
   }
 });
 

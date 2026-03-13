@@ -3,7 +3,8 @@ const {
   commentModel,
   userModel,
   dreamModel,
-  notificationsModel
+  notificationsModel, 
+  userStats
 } = require('../db-associations');
 
 const validateSession = require('../middleware/validate-session');
@@ -22,6 +23,15 @@ router.post('/create', validateSession, async (req, res) => {
       UserId: req.user.id
     });
 
+    await userStats.increment(
+      {
+        points: 2,
+        commentCount: 1
+      },
+      {
+        where: { userId: req.user.id }
+      }
+    );
     // 2️⃣ Find dream to determine owner
     const dream = await dreamModel.findByPk(DreamId);
 

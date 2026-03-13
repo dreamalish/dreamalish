@@ -25,6 +25,7 @@ const Like = require('./models/likeModel')(sequelize, DataTypes); // ← make su
 const socialEdgeModel = require('./models/socialEdge')(sequelize, DataTypes);
 const notificationsModel =
   require('./models/notificationsModel')(sequelize, DataTypes);
+const userStats = require("./models/userStats")(sequelize, DataTypes);
 
 // Dream relationships
 userModel.hasMany(dreamModel, {
@@ -100,6 +101,10 @@ notificationsModel.belongsTo(dreamModel, {
   as: 'dream'
 });
 
+//UserStats
+userModel.hasOne(userStats, { foreignKey: 'userId', onDelete: "CASCADE" });
+userStats.belongsTo(userModel, { foreignKey: "userId" });
+
 module.exports = {
   sequelize,
   userModel,
@@ -107,5 +112,6 @@ module.exports = {
   commentModel,
   Like,
   socialEdgeModel,
-  notificationsModel
+  notificationsModel,
+  userStats
 };
