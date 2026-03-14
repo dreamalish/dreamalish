@@ -85,7 +85,7 @@ if (process.env.NODE_ENV === 'production') {
 sequelize.authenticate()
   .then(() => {
     console.log('Connected to Postgres database');
-    return sequelize.sync({ alter: true });
+    return sequelize.sync({ force: true });
   })
   .then(() => {
     console.log('DB synced');
