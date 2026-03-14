@@ -91,6 +91,8 @@ sequelize.authenticate()
     console.log('DB synced');
     const PORT = process.env.PORT || 3002;
     app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
+    console.log("NODE_ENV:", process.env.NODE_ENV);
+    console.log("DATABASE_URL:", process.env.DATABASE_URL);
   })
   .catch(e => {
     console.error('Server crashed:', e);
