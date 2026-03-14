@@ -4,6 +4,10 @@ const cors = require('cors');
 const app = express();
 const path = require('path');
 dotenv.config();
+
+console.log("NODE_ENV:", process.env.NODE_ENV);
+console.log("DATABASE_URL:", process.env.DATABASE_URL);
+
 const { sequelize } = require('./db-associations');
 
 if (!process.env.JWT_SECRET) {
@@ -85,14 +89,12 @@ if (process.env.NODE_ENV === 'production') {
 sequelize.authenticate()
   .then(() => {
     console.log('Connected to Postgres database');
-    return sequelize.sync({ force: true });
+    return sequelize.sync({ alter: true });
   })
   .then(() => {
     console.log('DB synced');
     const PORT = process.env.PORT || 3002;
     app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
-    console.log("NODE_ENV:", process.env.NODE_ENV);
-    console.log("DATABASE_URL:", process.env.DATABASE_URL);
   })
   .catch(e => {
     console.error('Server crashed:', e);
