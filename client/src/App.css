@@ -773,3 +773,16 @@ body {
   color: #777;
   cursor: default;
 }
+
+.gif {
+  background-image: url("./assets/dreamalish-new.gif"); 
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover; /* Ensures the GIF covers the entire container */
+  min-height: 100vh; /* Makes the container full height of the viewport */
+  width: 100%;
+  /* Add an optional overlay to improve text readability */
+  background-color: rgba(0, 0, 0, 0.5); /* A dark overlay */
+  object-fit: cover;
+  z-index: -100;
+}

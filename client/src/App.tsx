@@ -7,6 +7,7 @@ import PublicProfile from './components/postIndex/PublicProfile';
 import './App.css';
 import Dreams from './components/postIndex/Dreams';
 import LoggedOut from "./components/LoggedOut";
+import logogif from './assets/dreamalish-new.gif';
 
 type State = {
   token: string;
@@ -36,7 +37,7 @@ export default class App extends React.Component<{}, State> {
     return (
       <div style={{ fontFamily: 'sans-serif' }}>
         <h1 style={{ padding: '1rem' }}>dreamalish</h1>
-
+        
         {!token ? (
           <>
             <Auth updateToken={this.updateToken} />
@@ -56,6 +57,7 @@ export default class App extends React.Component<{}, State> {
           </>
         )}
       </div>
+      
     );
   }
 }

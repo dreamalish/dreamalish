@@ -81,7 +81,17 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 */
+async function testDB() {
+  try {
+    await sequelize.authenticate();
+    console.log("✅ Database connection established");
+  } catch (err) {
+    console.error("❌ Database connection failed:", err);
+    process.exit(1);
+  }
+}
 
+testDB();
 /* =======================================================
    START SERVER
 ======================================================= */

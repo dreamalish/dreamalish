@@ -2,6 +2,7 @@ import React, { Component, FormEvent } from 'react';
 import { Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import { authFetch } from '../../helper/APIHelper';
 import { UserContext } from '../../contexts/UserContext';
+import logogif from '../../assets/dreamalish-new.gif';
 import logo from '../../assets/image.jpg';
 import defaultProfilePic from '../../assets/defaultProfilePic.jpg';
 import { useNavigate } from "react-router-dom";
