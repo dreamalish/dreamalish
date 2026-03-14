@@ -33,11 +33,6 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: false
     },
 
-    nsfwOk: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false
-    },
-
     location: {
       type: DataTypes.STRING,
       allowNull: true

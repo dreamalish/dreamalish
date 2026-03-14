@@ -16,7 +16,6 @@ type State = {
     username: string;
     email: string;
     password: string;
-    nsfwOk: boolean;
     error: string;
     isSubmitting: boolean;
 };
@@ -33,7 +32,6 @@ class Auth extends Component<Props & { navigate: (path: string) => void }, State
             username: '',
             email: '',
             password: '',
-            nsfwOk: false,
             error: '',
             isSubmitting: false
         };
@@ -50,7 +48,7 @@ class Auth extends Component<Props & { navigate: (path: string) => void }, State
         e.preventDefault();
         if (this.state.isSubmitting) return;
         this.setState({ isSubmitting: true });
-        const { isLogin, username, email, password, nsfwOk } = this.state;
+        const { isLogin, username, email, password } = this.state;
 
         try {
             const url = isLogin ? '/api/users/login' : '/api/users/create';
@@ -61,8 +59,7 @@ class Auth extends Component<Props & { navigate: (path: string) => void }, State
                       username,
                       email,
                       password,
-                      profilePic: '/uploads/defaultProfilePic.jpg',
-                      nsfwOk
+                      profilePic: '/uploads/defaultProfilePic.jpg'
                   };
 
             const data = await authFetch(url, {
@@ -93,7 +90,7 @@ class Auth extends Component<Props & { navigate: (path: string) => void }, State
     };
 
     render() {
-        const { isLogin, username, email, password, nsfwOk, error } = this.state;
+        const { isLogin, username, email, password, error } = this.state;
 
         return (
             <div className="auth-wrapper">
@@ -120,17 +117,6 @@ class Auth extends Component<Props & { navigate: (path: string) => void }, State
                                         value={email}
                                         onChange={e => this.setState({ email: e.target.value })}
                                     />
-                                </FormGroup>
-
-                                <FormGroup check>
-                                    <Label check>
-                                        <Input
-                                            type="checkbox"
-                                            checked={nsfwOk}
-                                            onChange={() => this.setState({ nsfwOk: !nsfwOk })}
-                                        />{' '}
-                                        NSFW content OK?
-                                    </Label>
                                 </FormGroup>
                             </>
                         )}
