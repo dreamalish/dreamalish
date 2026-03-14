@@ -85,20 +85,20 @@
 /* CATEGORY COLOR ACCENTS */
 /* ===== DREAM CATEGORY COLORS ===== */
 
-.dream-card.joy { border-top: 6px solid #FFD166; }
-.dream-card.love { border-top: 6px solid #E63946; }
-.dream-card.desire { border-top: 6px solid #C2185B; }
-.dream-card.fortune { border-top: 6px solid #2ECC71; }
+.dream-card.joy { border-top: 11px solid #FFD166; }
+.dream-card.love { border-top: 11px solid #E63946; }
+.dream-card.desire { border-top: 11px solid #C2185B; }
+.dream-card.fortune { border-top: 11px solid #2ECC71; }
 
-.dream-card.despair { border-top: 6px solid #2D2D34; }
-.dream-card.fear { border-top: 6px solid #3A0CA3; }
-.dream-card.rage { border-top: 6px solid #9D0208; }
-.dream-card.humiliation { border-top: 6px solid #6A4C93; }
+.dream-card.despair { border-top: 11px solid #2D2D34; }
+.dream-card.fear { border-top: 11px solid #3A0CA3; }
+.dream-card.rage { border-top: 11px solid #9D0208; }
+.dream-card.humiliation { border-top: 11px solid #6A4C93; }
 
-.dream-card.confusion { border-top: 6px solid #00B4D8; }
-.dream-card.memory { border-top: 6px solid #457B9D; }
-.dream-card.envy { border-top: 6px solid #6A994E; }
-.dream-card.mundanity { border-top: 6px solid #ADB5BD; }
+.dream-card.confusion { border-top: 11px solid #00B4D8; }
+.dream-card.memory { border-top: 11px solid #457B9D; }
+.dream-card.envy { border-top: 11px solid #6A994E; }
+.dream-card.mundanity { border-top: 11px solid #ADB5BD; }
 
 /* Responsive tweaks */
 @media (max-width: 768px) {
@@ -355,4 +355,11 @@
   gap: 15px;
   margin-top: 10px;
   font-size: 1.1rem;
+}
+
+.category {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 150;
+  font-size: 0.75 rem;
+  color: rgb(56, 50, 50);
 }

@@ -1,20 +1,36 @@
-const { Sequelize, DataTypes } = require('sequelize');
+/*const { Sequelize, DataTypes } = require('sequelize');
 require('dotenv').config();
 
 const isProduction = process.env.NODE_ENV === 'production';
 
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
+  dialect: 'postgres',
+  protocol: 'postgres',
+  dialectOptions: isProduction
+    ? {
+        ssl: {
+          require: true,
+          rejectUnauthorized: false,
+        },
+      }
+    : {},
+  logging: false,
+});
+*/
+const { Sequelize, DataTypes } = require("sequelize");
+require("dotenv").config();
+
+let dbUrl = process.env.DATABASE_URL;
+
+// Force SSL for Render external connections
+if (!dbUrl.includes("sslmode")) {
+  dbUrl += "?sslmode=require";
+}
+
+const sequelize = new Sequelize(dbUrl, {
   dialect: "postgres",
-  protocol: "postgres",
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false
-    }
-  },
   logging: false
 });
-
 
 const userModel = require('./models/userModel')(sequelize, DataTypes);
 const dreamModel = require('./models/dreamModel')(sequelize, DataTypes);
