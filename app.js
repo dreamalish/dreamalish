@@ -56,7 +56,7 @@ app.use('/api/users', require('./controllers/userController'));
 app.use('/api/dreams', require('./middleware/validate-session'), dreamController);
 app.use('/api/comments', require('./middleware/validate-session'), commentController);
 app.use('/api/profile', require('./middleware/validate-session'), profileController);
-app.use("/private-profile", privateProfileRoutes);
+/*app.use("/private-profile", require('./middleware/validate-session'), privateProfileRoutes);*/
 app.use('/api/notifications',
   require('./middleware/validate-session'), notificationsController);
 

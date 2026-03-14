@@ -23,7 +23,7 @@ router.post('/create', validateSession, async (req, res) => {
       isPrivate: isPrivate || false,
       UserId: req.user.id,
     });
-      await UserStats.increment(
+      await userStats.increment(
       {
         points: 5,
         dreamCount: 1
@@ -194,7 +194,7 @@ router.post('/:id/like', validateSession, async (req, res) => {
     // ===============================
     await Like.create({ userId, dreamId });
 
-    await UserStats.increment(
+    await userStats.increment(
       { points: 1 },
       { where: { userId: dream.UserId } }
     );

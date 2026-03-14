@@ -17,7 +17,7 @@ export default function PublicProfile() {
     const fetchUser = async () => {
       try {
 
-        const res = await authFetch(`/api/profile/u/${username}`);
+        const res = await authFetch(`/api/profile/user/${username}`);
         setUser(res);
 
         // fetch stats for this user

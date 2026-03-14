@@ -125,58 +125,9 @@ router.get('/me', validateSession, async (req, res) => {
   }
 });
 
-/* ===========================
-   PUBLIC PROFILE
-=========================== */
-router.get('/u/:username', async (req, res) => {
-  try {
-    const user = await userModel.findOne({
-      where: { username: req.params.username },
-      attributes: [
-        'username',
-        'profilePic',
-        'bio',
-        'location',
-        'createdAt'
-      ]
-    });
-
-    if (!user) return res.status(404).json({ error: 'User not found' });
-
-    res.json(user);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-/* ===========================
-   GENERIC USER LOOKUP (LAST)
-=========================== */
-router.get('/:username', async (req, res) => {
-  try {
-    const user = await userModel.findOne({
-      where: { username: req.params.username },
-      attributes: [
-        'id',
-        'username',
-        'email',
-        'profilePic',
-        'bio',
-        'location',
-        'createdAt'
-      ]
-    });
-
-    if (!user) return res.status(404).json({ error: 'User not found' });
-
-    res.json(user);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-/*levelCalculator route
-*/
+// ===============================
+// GET MY LEVEL + STATS
+// ===============================
 router.get('/stats', validateSession, async (req, res) => {
 
   try {
@@ -185,8 +136,17 @@ router.get('/stats', validateSession, async (req, res) => {
       where: { userId: req.user.id }
     });
 
+    // ⭐ DEFAULT STATS IF NONE EXIST
     if (!stats) {
-      return res.status(404).json({ error: "Stats not found" });
+      return res.json({
+        points: 0,
+        dreamCount: 0,
+        commentCount: 0,
+        likesReceived: 0,
+        level: 1,
+        title: "Dreamer",
+        nextLevel: 100
+      });
     }
 
     const levelInfo = calculateLevel(stats.points);
@@ -202,12 +162,16 @@ router.get('/stats', validateSession, async (req, res) => {
     });
 
   } catch (err) {
-    console.error("STATS ERROR:", err);
-    res.status(500).json({ error: err.message });
+
+    console.error("PROFILE STATS ERROR:", err);
+
+    res.status(500).json({
+      error: "Failed to load profile stats"
+    });
+
   }
 
 });
-
 // ===============================
 // PUBLIC USER STATS
 // ===============================
@@ -235,6 +199,56 @@ router.get('/stats/:userId', async (req, res) => {
 
   } catch (err) {
     console.error("PUBLIC STATS ERROR:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/* ===========================
+   PUBLIC PROFILE
+=========================== */
+router.get('/u/:username', async (req, res) => {
+  try {
+    const user = await userModel.findOne({
+      where: { username: req.params.username },
+      attributes: [
+        'username',
+        'profilePic',
+        'bio',
+        'location',
+        'createdAt'
+      ]
+    });
+
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/* ===========================
+   GENERIC USER LOOKUP (LAST)
+=========================== */
+router.get('/user/:username', async (req, res) => {
+  try {
+    const user = await userModel.findOne({
+      where: { username: req.params.username },
+      attributes: [
+        'id',
+        'username',
+        'email',
+        'profilePic',
+        'bio',
+        'location',
+        'createdAt'
+      ]
+    });
+
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    res.json(user);
+  } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
