@@ -40,6 +40,13 @@ const DreamModal: React.FC<Props> = ({
         <strong>{dream.title}</strong>
         <p className="category"><i>{dream.category}</i></p>
         </div>
+        <button
+        className="dream-modal-close"
+        onClick={onClose}
+        aria-label="Close dream"
+        >
+        ×
+      </button>
       </ModalHeader>
 
       <ModalBody onClick={(e) => e.stopPropagation()}>
@@ -74,11 +81,6 @@ const DreamModal: React.FC<Props> = ({
           }}
         />
       </ModalBody>
-      <div className="modal-close-row">
-      <button className="modal-close-btn" onClick={onClose}>
-       Close
-      </button>
-      </div>
     </Modal>
   );
 };

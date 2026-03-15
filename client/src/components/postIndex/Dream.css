@@ -358,31 +358,31 @@
 }
 
 .category {
-  font-family: 'Poppins', sans-serif;
-  font-weight: 50;
+  font-family: sans-serif;
+  font-weight: 30;
   font-size: 0.4 rem;
   color: rgb(56, 50, 50);
 }
 
 .dream-modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  position: relative;
 }
 
 .dream-modal-close {
-  font-size: 34px;
-  border: 3px;
-  margin-right: 7px;
-  background:  rgb(10, 12, 136);
+  position: absolute;
+  right: 15px;
+  top: 10px;
+  font-size: 26px;
+  border: none;
+  background: transparent;
   cursor: pointer;
+  color: #555;
   line-height: 1;
-  color: rgb(252, 247, 247);
   padding: 0;
 }
 
 .dream-modal-close:hover {
-  color: #000;
+  color: black;
 }
 
 .modal-close-row {

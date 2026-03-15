@@ -494,4 +494,9 @@ body {
     margin-top: 0px;
     margin-bottom: 4px;
   }
+
+  .dream-modal-close {
+    width: 32px;
+    height: 32px;
+  }
   }
