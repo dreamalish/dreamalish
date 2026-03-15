@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { authFetch } from '../../helper/APIHelper';
 import AvatarImage from "../common/AvatarImage";
 import LevelProgress from "../profile/LevelProgress";
+import ReactGA from 'react-ga4';
 
 export default function PublicProfile() {
 
@@ -23,7 +24,10 @@ export default function PublicProfile() {
         // fetch stats for this user
         const statsRes = await authFetch(`/api/profile/stats/${res.id}`);
         setStats(statsRes);
-
+        ReactGA.event({
+          category: "Profile",
+          action: "View Profile"
+        });
       } catch (err) {
         console.error(err);
       } finally {

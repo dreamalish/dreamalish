@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Button, Modal, ModalHeader, ModalBody, Form, FormGroup, Input, Label } from 'reactstrap';
 import { authFetch } from '../../helper/APIHelper';
 import { DreamType } from '../../types/CustomTypes';
+import ReactGA from "react-ga4";
 
 type Props = {
   onClose: () => void;
@@ -28,6 +29,10 @@ export default function CreateDreamModal({ onClose, onDreamCreated }: Props) {
       const res = await authFetch('/api/dreams/create', {
         method: 'POST',
         body: JSON.stringify(payload),
+      });
+      ReactGA.event({
+        category: "Dream",
+        action: "Create Dream"
       });
       console.log("CreateDream POST response:", res);
       // Add new dream only if backend responds successfully

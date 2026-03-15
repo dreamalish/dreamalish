@@ -7,6 +7,7 @@ import SearchUsers from '../SearchUsers';
 import AvatarImage from '../common/AvatarImage';
 import NotificationsDropdown from '../notifications/NotificationsDropdown';
 import { UserContext } from '../../contexts/UserContext';
+import ReactGA from 'react-ga4';
 import './SiteNav.css';
 
 export default function SiteNav({ logout }: { logout: () => void }) {
@@ -37,6 +38,10 @@ export default function SiteNav({ logout }: { logout: () => void }) {
     // Refresh unread count when opening
     if (!isNotificationsOpen) {
       await loadUnreadCount();
+      ReactGA.event({
+        category: "Notifications",
+        action: "Open Dropdown"
+      });
     }
   };
 

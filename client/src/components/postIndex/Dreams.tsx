@@ -10,6 +10,7 @@ import { UserContext } from '../../contexts/UserContext';
 import AvatarImage from "../common/AvatarImage";
 import APIURL from '../../helper/Environment';
 import defaultProfilePic from '../../assets/defaultProfilePic.jpg';
+import ReactGA from "react-ga4";
 
 type Props = {
   user: any | null;
@@ -135,6 +136,10 @@ useEffect(() => {
       )
     );
     authFetch(`/api/dreams/${id}/like`, { method: 'POST' }).catch(fetchDreams);
+    ReactGA.event({
+      category: "Dream",
+      action: "Like Dream"
+    });
   };
 
   return (

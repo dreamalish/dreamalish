@@ -1,4 +1,4 @@
-const { Sequelize, DataTypes } = require('sequelize');
+/*const { Sequelize, DataTypes } = require('sequelize');
 require('dotenv').config();
 
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
@@ -13,7 +13,36 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
     }
   }
 });
+*/
+const { Sequelize, DataTypes } = require("sequelize");
+require("dotenv").config();
 
+const isProduction = process.env.NODE_ENV === "production";
+
+const sequelize = new Sequelize(process.env.DATABASE_URL, {
+  dialect: "postgres",
+  logging: false,
+  dialectOptions: isProduction
+    ? {
+        ssl: {
+          require: true,
+          rejectUnauthorized: false
+        }
+      }
+    : {}
+});
+
+async function testDB() {
+  try {
+    await sequelize.authenticate();
+    console.log("✅ Database connection established");
+  } catch (err) {
+    console.error("❌ Database connection failed:", err);
+    process.exit(1);
+  }
+}
+
+testDB();
 
 const userModel = require('./models/userModel')(sequelize, DataTypes);
 const dreamModel = require('./models/dreamModel')(sequelize, DataTypes);

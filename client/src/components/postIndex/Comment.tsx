@@ -3,6 +3,7 @@ import { Form, FormGroup, Input, Button } from "reactstrap";
 import { Link } from 'react-router-dom';
 import { authFetch } from "../../helper/APIHelper";
 import AvatarImage from "../common/AvatarImage";
+import ReactGA from "react-ga4";
 import './Comment.css';
 
 type CommentType = {
@@ -75,6 +76,10 @@ setContent("");
 
 if (onCommentAdded) {
   onCommentAdded(res);
+  ReactGA.event({
+    category: "Comment",
+    action: "Add Comment"
+  });
 }
 
       }

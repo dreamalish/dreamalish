@@ -359,7 +359,44 @@
 
 .category {
   font-family: 'Poppins', sans-serif;
-  font-weight: 150;
-  font-size: 0.75 rem;
+  font-weight: 50;
+  font-size: 0.4 rem;
   color: rgb(56, 50, 50);
+}
+
+.dream-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.dream-modal-close {
+  font-size: 34px;
+  border: 3px;
+  margin-right: 7px;
+  background:  rgb(10, 12, 136);
+  cursor: pointer;
+  line-height: 1;
+  color: rgb(252, 247, 247);
+  padding: 0;
+}
+
+.dream-modal-close:hover {
+  color: #000;
+}
+
+.modal-close-row {
+  text-align: right;
+  margin-top: 20px;
+}
+
+.modal-close-btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 20px;
+  background: #444;
+  color: white;
+  cursor: pointer;
+  margin-bottom: 8px;
+  margin-right: 7px;
 }

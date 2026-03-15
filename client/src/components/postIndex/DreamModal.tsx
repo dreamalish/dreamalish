@@ -2,6 +2,7 @@ import React from "react";
 import { Modal, ModalBody, ModalHeader } from "reactstrap";
 import Comment from "./Comment";
 import { DreamType } from "../../types/CustomTypes";
+import AvatarImage from '../../components/common/AvatarImage';
 import "./Dream.css";
 
 type Props = {
@@ -24,16 +25,21 @@ const DreamModal: React.FC<Props> = ({
 
   return (
     <Modal
-      isOpen={true}
-      toggle={onClose}
-      size="lg"
-      centered
-      className="dream-modal"
-      backdropClassName="dream-modal-backdrop"
-    >
-      <ModalHeader toggle={onClose}>
+  isOpen={true}
+  toggle={onClose}
+  size="lg"
+  centered
+  backdrop={true}
+  keyboard={true}
+  className="dream-modal"
+  backdropClassName="dream-modal-backdrop"
+>
+      
+      <ModalHeader className="dream-modal-header">
+        <div className="dream-modal-title">
         <strong>{dream.title}</strong>
         <p className="category"><i>{dream.category}</i></p>
+        </div>
       </ModalHeader>
 
       <ModalBody>
@@ -42,6 +48,7 @@ const DreamModal: React.FC<Props> = ({
           
           {/* Views + Likes */}
   <div className="modal-dream-stats">
+    
     <span>👁 {dream.views || 0}</span>
     <span
       style={{ cursor: 'pointer', marginLeft: '10px' }}
@@ -67,6 +74,11 @@ const DreamModal: React.FC<Props> = ({
           }}
         />
       </ModalBody>
+      <div className="modal-close-row">
+      <button className="modal-close-btn" onClick={onClose}>
+       Close
+      </button>
+      </div>
     </Modal>
   );
 };
