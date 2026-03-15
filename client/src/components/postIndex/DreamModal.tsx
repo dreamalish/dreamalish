@@ -42,7 +42,7 @@ const DreamModal: React.FC<Props> = ({
         </div>
       </ModalHeader>
 
-      <ModalBody>
+      <ModalBody onClick={(e) => e.stopPropagation()}>
         <div className="modal-dream-content">
           <p>{dream.content}</p>
           
