@@ -16,9 +16,8 @@ export default function AvatarImage({
   const resolveSrc = () => {
     if (!src) return defaultProfilePic;
 
-    if (src.startsWith("http")) return src;
-
-    return defaultProfilePic;
+    if (src.startsWith("http") || src.startsWith("/uploads")) return src;
+return defaultProfilePic;
   };
 
   return (
