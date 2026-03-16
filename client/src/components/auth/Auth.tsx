@@ -59,7 +59,7 @@ class Auth extends Component<Props & { navigate: (path: string) => void }, State
                       username,
                       email,
                       password,
-                      profilePic: '/uploads/defaultProfilePic.jpg'
+                      profilePic: {defaultProfilePic}
                   };
 
             const data = await authFetch(url, {
