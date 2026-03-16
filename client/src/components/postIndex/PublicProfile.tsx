@@ -42,9 +42,7 @@ export default function PublicProfile() {
   if (loading) return <p>Loading profile...</p>;
   if (!user) return <p>User not found.</p>;
 
-  const avatarUrl = user.profilePic
-    ? user.profilePic
-    : '/assets/defaultProfilePic.jpg';
+  const avatarUrl = user.profilePic;
 
   return (
     <div style={{ maxWidth: '500px', margin: '2rem auto', textAlign: "center" }}>
