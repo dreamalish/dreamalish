@@ -43,7 +43,7 @@ export default function PublicProfile() {
   if (!user) return <p>User not found.</p>;
 
   const avatarUrl = user.profilePic;
-
+  console.log("PublicProfile avatar:", user?.profilePic);
   return (
     <div style={{ maxWidth: '500px', margin: '2rem auto', textAlign: "center" }}>
 
